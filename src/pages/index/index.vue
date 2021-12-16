@@ -1,58 +1,98 @@
 <template>
   <view class="index">
-    <u-navbar safeAreaInsetTop :leftIcon="null" bgColor="#5cd7d4"> </u-navbar>
+    <u-navbar safeAreaInsetTop bgColor="#5cd7d4"
+      ><template slot="left"><view></view></template
+    ></u-navbar>
     <view class="top"
       ><image src="../../static/52hz.svg" class="text" mode="heightFix" /><view
         class="icon"
-        ><view class="line__1"></view><view class="line__2"></view
-        ><view class="line__3"></view></view
+        @click="toChange"
+        ><view :class="'lines line__1--statue' + pageStatue"></view
+        ><view :class="'lines line__2--statue' + pageStatue"></view
+        ><view :class="'lines line__3--statue' + pageStatue"></view></view
     ></view>
-    <view
-      class="wave_1"
-      style="background-image: url(../../static/wave_1.svg)"
-    ></view>
-    <view
-      class="wave_2"
-      style="background-image: url(../../static/wave_2.svg)"
-    ></view>
-    <view
-      class="wave_3"
-      style="background-image: url(../../static/wave_3.svg)"
-    ></view>
+    <view class="wave_1"></view>
+    <view class="wave_2"></view>
+    <view class="wave_3"></view>
     <view class="waves">
-      <my-wave
+      <view
         class="wave"
         v-for="item in 35"
         :key="item"
         :style="'height:' + heights[item] + 'rpx'"
-      />
+      ></view>
     </view>
     <image src="../../static/btn.svg" class="btn" @click="toDo" />
   </view>
 </template>
 
 <script>
-import myWave from "../../components/singleWave/index.vue";
 export default {
-  components: {
-    myWave,
-  },
   data() {
     return {
       title: "Hello",
+      pageStatue: 1,
       heights: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       ],
+      ranges: [
+        [6, 12],
+        [3, 8],
+        [5, 9],
+        [3, 7],
+        [1, 4],
+        [1, 3],
+        [1, 2],
+        [2, 5],
+        [1, 3],
+        [1, 2],
+        [3, 6],
+        [1, 4],
+        [2, 5],
+        [1, 3],
+      ],
+      rate: 1,
     };
   },
-  onLoad() {},
+  created() {
+    setInterval(() => {
+      for (let i = 0; i < this.rate * 7; i++) {
+        this.$set(
+          this.heights,
+          17 - i,
+          12 *
+            this.rate *
+            (Math.floor(
+              Math.random() * (this.ranges[i][1] - this.ranges[i][0])
+            ) +
+              this.ranges[i][0])
+        );
+        this.$set(
+          this.heights,
+          17 + i,
+          12 *
+            this.rate *
+            (Math.floor(
+              Math.random() * (this.ranges[i][1] - this.ranges[i][0])
+            ) +
+              this.ranges[i][0])
+        );
+      }
+    }, 200);
+  },
   methods: {
     toDo() {
-      this.heights[6] = 32;
-      this.heights.map((item, i, self) => {
-        this.$set(self, i, item);
-      });
+      this.rate = this.rate === 1 ? 2 : 1;
+      if (this.rate === 1) {
+        this.heights.map((item, i, self) => {
+          this.$set(self, i, 0);
+        });
+      }
+    },
+    toChange() {
+      this.pageStatue++;
+      if (this.pageStatue === 4) this.pageStatue = 1;
     },
   },
 };
@@ -64,29 +104,76 @@ export default {
   position: relative;
   overflow: hidden;
   width: 100vw;
+  max-width: 400px;
+  margin: 0 auto;
   height: 100vh;
   padding: 0 32rpx;
+  box-sizing: border-box;
   .top {
-    width: 686rpx;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     .text {
       height: 96rpx;
     }
     .icon {
-      height: 96rpx;
-      width: 96rpx;
-      padding: 18rpx 9rpx;
+      width: 70rpx;
+      height: 56rpx;
       box-sizing: border-box;
-      cursor: pointer;
-      .line__1,
-      .line__2,
-      .line__3 {
-        width: 60rpx;
+      position: relative;
+      margin: 20rpx 0;
+      .lines {
+        position: absolute;
+        width: 56rpx;
         height: 8rpx;
-        margin: 9rpx;
         background-color: white;
         border-radius: 4rpx;
+        transition: all 1s;
+      }
+      .line__1--statue1 {
+        top: 9rpx;
+        left: 9rpx;
+      }
+      .line__2--statue1 {
+        top: 25rpx;
+        left: 9rpx;
+      }
+      .line__3--statue1 {
+        top: 41rpx;
+        left: 9rpx;
+      }
+      .line__1--statue2 {
+        top: 18rpx;
+        left: 9rpx;
+        width: 38rpx;
+        transform: rotate(-30deg);
+      }
+      .line__2--statue2 {
+        top: 24rpx;
+        left: 12rpx;
+        width: 50rpx;
+      }
+      .line__3--statue2 {
+        top: 32rpx;
+        left: 9rpx;
+        width: 38rpx;
+        transform: rotate(30deg);
+      }
+
+      .line__1--statue3 {
+        top: 25rpx;
+        left: 9rpx;
+        transform: rotate(45deg);
+      }
+      .line__2--statue3 {
+        top: 25rpx;
+        width: 0;
+        left: 28rpx;
+      }
+      .line__3--statue3 {
+        top: 25rpx;
+        left: 9rpx;
+        transform: rotate(-45deg);
       }
     }
   }
@@ -96,6 +183,7 @@ export default {
     position: absolute;
     left: 0;
     top: 400rpx;
+    background-image: url("~@/static/wave_1.png");
     background-repeat: repeat-x;
     animation: slideshow 10s linear infinite;
   }
@@ -105,6 +193,7 @@ export default {
     position: absolute;
     right: 0;
     top: 500rpx;
+    background-image: url("~@/static/wave_2.png");
     background-repeat: repeat-x;
     animation: slideshow-reverse 10s linear infinite;
   }
@@ -114,11 +203,12 @@ export default {
     position: absolute;
     left: 0;
     top: 600rpx;
+    background-image: url("~@/static/wave_3.png");
     background-repeat: repeat-x;
     animation: slideshow 10s linear infinite;
   }
   .waves {
-    width: 750rpx;
+    width: 100%;
     height: 250rpx;
     position: absolute;
     left: 0;
@@ -133,18 +223,18 @@ export default {
       min-height: 12rpx;
       border-radius: 6rpx;
       background-color: rgba(92, 215, 212, 0.4);
-      transition: all 0.1s;
+      transition: all 0.5s;
     }
   }
   .btn {
     width: 144rpx;
     height: 144rpx;
     position: absolute;
-    left: 303rpx;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 60rpx;
     bottom: calc(60rpx + constant(safe-area-inset-bottom));
     bottom: calc(60rpx + env(safe-area-inset-bottom));
-    cursor: pointer;
   }
 }
 @keyframes slideshow {
