@@ -1,6 +1,6 @@
 <template>
   <view class="index">
-    <u-navbar safeAreaInsetTop bgColor="#5cd7d4"
+    <u-navbar safeAreaInsetTop bgColor="#ffffff00"
       ><template slot="left"><view></view></template
     ></u-navbar>
     <view class="top"
@@ -31,44 +31,62 @@
         ><view :class="'lines line__2--statue' + pageStatue"></view
         ><view :class="'lines line__3--statue' + pageStatue"></view></view
     ></view>
-    <view :class="'theWave wave_1--statue' + pageStatue"></view>
-    <view :class="'theWave wave_2--statue' + pageStatue"></view>
-    <view :class="'theWave wave_3--statue' + pageStatue"></view>
+    <view
+      :class="
+        'theWave wave_1--statue' +
+        pageStatue +
+        (pageStatue === 4 ? ' up-class' : '')
+      "
+    ></view>
+    <view
+      :class="
+        'theWave wave_2--statue' +
+        pageStatue +
+        (pageStatue === 4 ? ' up-class' : '')
+      "
+    ></view>
+    <view
+      :class="
+        'theWave wave_3--statue' +
+        pageStatue +
+        (pageStatue === 4 ? ' up-class' : '')
+      "
+    ></view>
     <image
-      class="btnText text_1"
+      :class="'btnText text_1' + (pageStatue === 2 ? ' show-class' : '')"
       src="../../static/btn_1.svg"
       mode="heightFix"
-      v-show="tempStatue"
+      v-show="pageStatue === 2 || tempStatue"
     />
     <image
-      class="btnText text_2"
+      :class="'btnText text_2' + (pageStatue === 2 ? ' show-class' : '')"
       src="../../static/btn_2.svg"
       mode="heightFix"
-      v-show="tempStatue"
+      v-show="pageStatue === 2 || tempStatue"
     /><image
-      class="btnText text_3"
+      :class="'btnText text_3' + (pageStatue === 2 ? ' show-class' : '')"
       src="../../static/btn_3.svg"
       mode="heightFix"
-      v-show="tempStatue"
+      v-show="pageStatue === 2 || tempStatue"
     />
     <input
       type="text"
       placeholder="天外天账号"
       class="account"
       :value="account"
-      placeholder-style="color:#1C2550;opacity:0.7"
+      placeholder-style="color:#1C2550;opacity:0.7;font-weight:500"
       v-if="pageStatue === 0"
     />
     <input
-      type="password"
+      type="text"
       placeholder="密码"
       class="password"
       :value="password"
-      placeholder-style="color:#5CD7D4;opacity:0.7"
+      placeholder-style="color:#5CD7D4;opacity:0.7;font-weight:500"
       v-if="pageStatue === 0"
+      :password="isPassword"
     />
     <u-button
-      :plain="true"
       text="登录"
       loadingText="登录中"
       :loading="loginLoading"
@@ -79,15 +97,15 @@
     ></u-button>
     <image
       src="../../static/whale.svg"
-      class="whale_1"
-      v-show="pageStatue === 1"
+      :class="'whale_1' + (pageStatue === 4 ? ' hide-class' : '')"
+      v-show="pageStatue === 1 || (pageStatue === 4 && !tempStatue_2)"
     />
     <image
       src="../../static/whale_1.svg"
-      class="whale_2"
-      v-show="pageStatue === 1"
+      :class="'whale_2' + (pageStatue === 4 ? ' hide-class' : '')"
+      v-show="pageStatue === 1 || (pageStatue === 4 && !tempStatue_2)"
     />
-    <view class="waves" v-if="pageStatue === 1">
+    <view class="waves" v-if="pageStatue === 1 || pageStatue === 4">
       <view
         class="wave"
         v-for="item in 35"
@@ -96,16 +114,22 @@
       ></view>
     </view>
     <image
-      src="../../static/btn.svg"
+      :src="
+        pageStatue === 1
+          ? require('../../static/btn.svg')
+          : pageStatue === 4
+          ? require('../../static/send.svg')
+          : require('../../static/btn.svg')
+      "
       class="btn"
       @click="toDo"
-      v-show="pageStatue === 1"
+      v-show="pageStatue === 1 || pageStatue === 4"
     />
     <image
-      class="copyright"
+      :class="'copyright' + (pageStatue === 2 ? ' show-class' : '')"
       src="../../static/right.svg"
       mode="heightFix"
-      v-show="tempStatue"
+      v-show="pageStatue === 2 || tempStatue"
     />
   </view>
 </template>
@@ -115,7 +139,7 @@ export default {
   data() {
     return {
       title: "Hello",
-      pageStatue: 0,
+      pageStatue: 1,
       password: "",
       account: "",
       loginLoading: false,
@@ -139,8 +163,10 @@ export default {
         [2, 5],
         [1, 3],
       ],
+      isPassword: true,
       rate: 1,
       tempStatue: false,
+      tempStatue_2: false,
       btnStyle: {
         position: "relative",
         left: "50%",
@@ -152,8 +178,9 @@ export default {
         margin: "0",
         border: "1px solid #5CD7D4",
         boxSizing: "border-box",
-        backgroundColor: "#1C2550",
-        color: "#5CD7D4",
+        backgroundColor: "#5CD7D4",
+        color: "#1C2550",
+        fontWeight: "700",
       },
     };
   },
@@ -185,6 +212,12 @@ export default {
   },
   methods: {
     toDo() {
+      if (this.pageStatue === 1) {
+        this.pageStatue = 4;
+        setTimeout(() => {
+          this.tempStatue_2 = true;
+        }, 1000);
+      }
       // this.rate = this.rate === 1 ? 2 : 1;
       // if (this.rate === 1) {
       //   this.heights.map((item, i, self) => {
@@ -193,14 +226,17 @@ export default {
       // }
     },
     toChange() {
-      this.pageStatue++;
-      if (this.pageStatue === 3) this.pageStatue = 1;
-      if (this.pageStatue === 2) {
+      if (this.pageStatue === 1) {
+        this.pageStatue = 2;
         setTimeout(() => {
-          this.tempStatue = true;
+          if (this.pageStatue === 2) this.tempStatue = true;
         }, 1000);
-      } else {
+      } else if (this.pageStatue === 2) {
+        this.pageStatue = 1;
         this.tempStatue = false;
+      } else if (this.pageStatue === 4) {
+        this.pageStatue = 1;
+        this.tempStatue_2 = false;
       }
     },
     toLogin() {
@@ -230,6 +266,7 @@ export default {
     display: flex;
     justify-content: space-between;
     .text {
+      z-index: 10;
       height: 96rpx;
     }
     .icon {
@@ -238,6 +275,7 @@ export default {
       box-sizing: border-box;
       position: relative;
       margin: 20rpx 0;
+      z-index: 10;
       .lines {
         position: absolute;
         width: 56rpx;
@@ -276,28 +314,44 @@ export default {
         transform: rotate(30deg);
       }
 
-      .line__1--statue3 {
+      .line__1--statue3,
+      .line__1--statue4 {
         top: 25rpx;
         left: 9rpx;
         transform: rotate(45deg);
       }
-      .line__2--statue3 {
+      .line__2--statue3,
+      .line__2--statue4 {
         top: 25rpx;
         width: 0;
         left: 28rpx;
       }
-      .line__3--statue3 {
+      .line__3--statue3,
+      .line__3--statue4 {
         top: 25rpx;
         left: 9rpx;
         transform: rotate(-45deg);
       }
     }
   }
+  .up-class {
+    transition: all 0.5s ease-in !important;
+    top: -100vh !important;
+  }
+  .hide-class {
+    transition: all 0.5s ease-in !important;
+    opacity: 0 !important;
+  }
+  .show-class {
+    transition: all 0.5s ease-in !important;
+    opacity: 1 !important;
+  }
   .btnText {
-    position: absolute;
+    position: absolute !important;
     left: 50%;
     transform: translateX(-50%);
     height: 72rpx;
+    opacity: 0;
   }
   .text_1 {
     top: 500rpx;
@@ -313,10 +367,9 @@ export default {
     top: 500rpx;
     left: 50%;
     transform: translateX(-50%);
-    text-align: center;
     width: 480rpx;
     height: 80rpx;
-    border: 1px solid #1c2550;
+    border: none;
     border-radius: 24rpx;
     color: #1c2550;
   }
@@ -325,10 +378,9 @@ export default {
     top: 750rpx;
     left: 50%;
     transform: translateX(-50%);
-    text-align: center;
     width: 480rpx;
     height: 80rpx;
-    border: 1px solid #5cd7d4;
+    border: none;
     border-radius: 24rpx;
     color: #5cd7d4;
   }
@@ -361,19 +413,22 @@ export default {
     background-image: url("~@/static/wave_3.png");
     animation: slideshow 15s linear infinite;
   }
-  .wave_1--statue1 {
+  .wave_1--statue1,
+  .wave_1--statue4 {
     left: 0;
     top: 400rpx;
     background-image: url("~@/static/wave_1.png");
     animation: slideshow 15s linear infinite;
   }
-  .wave_2--statue1 {
+  .wave_2--statue1,
+  .wave_2--statue4 {
     right: 0;
     top: 500rpx;
     background-image: url("~@/static/wave_2.png");
     animation: slideshow-reverse 15s linear infinite;
   }
-  .wave_3--statue1 {
+  .wave_3--statue1,
+  .wave_3--statue4 {
     left: 0;
     top: 600rpx;
     background-image: url("~@/static/wave_3.png");
@@ -426,12 +481,13 @@ export default {
   }
   .copyright {
     height: 24rpx;
-    position: absolute;
+    position: absolute !important;
     left: 50%;
     transform: translateX(-50%);
     bottom: 60rpx;
     bottom: calc(60rpx + constant(safe-area-inset-bottom));
     bottom: calc(60rpx + env(safe-area-inset-bottom));
+    opacity: 0;
   }
 }
 @keyframes slideshow {
