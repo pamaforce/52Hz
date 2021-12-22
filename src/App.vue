@@ -2,10 +2,10 @@
 @import "uview-ui/index.scss";
 </style>
 <script>
-//import { getUserByName } from "./api/index";
+// import { getUser } from "./api/index";
 export default {
   onLaunch: function () {
-    // getUserByName({ userName: "陈昕冉" })
+    // getUser({ account: "3020205094", password: "121221" })
     //   .then((res) => {
     //     console.log(res);
     //   })
