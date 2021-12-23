@@ -1,6 +1,6 @@
 import { service } from '../utils/request';
 
-export function getUser(data) { //用户登录接口
+export function login(data) {
     return service({
         url: 'login',
         method: "POST",
@@ -8,10 +8,34 @@ export function getUser(data) { //用户登录接口
     })
 }
 
-export function getUserByName(data) { //通过姓名获取用户信息接口
+export function getConfession(data) {
+    return service({
+        url: 'getConfession',
+        method: "GET",
+        data
+    })
+}
+
+export function getUserByName(data) {
     return service({
         url: 'getUserByName',
         method: "GET",
+        data
+    })
+}
+
+export function getUserByUserNumber(data) {
+    return service({
+        url: 'getUserByUserNumber',
+        method: "GET",
+        data
+    })
+}
+
+export function addConfession(data) {
+    return service({
+        url: 'addConfession',
+        method: "POST",
         data
     })
 }

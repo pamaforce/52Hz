@@ -12,11 +12,13 @@ export const service = (options) => {
                 ticket: 'NTJIei5jNWFlZjI0MTEzYzk2Y2JiNGVmZmZkN2Y0YmNlY2M0MmNhZmExYmRi'
             },
             success: ({ data: res }) => {
-                resolve(res)
+                if (res.code === 0) {
+                    resolve(res)
+                } else {
+                    reject(res)
+                }
             },
-            fail: (err) => {
-                reject(err)
-            }
+            fail: () => {}
         })
     })
 }

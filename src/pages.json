@@ -10,6 +10,13 @@
                 "navigationBarTextStyle": "white",
                 "disableScroll": true
             }
+        },
+        {
+            "path": "pages/protocol/index",
+            "style": {
+                "navigationBarTitleText": "52Hz 隐私政策",
+                "disableScroll": true
+            }
         }
     ],
     "globalStyle": {

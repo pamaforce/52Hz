@@ -1,213 +1,377 @@
 <template>
-  <view class="index">
-    <u-navbar safeAreaInsetTop bgColor="#ffffff00"
-      ><template slot="left"><view></view></template
-    ></u-navbar>
-    <view class="top"
-      ><image
-        :src="
-          pageStatue === 0
-            ? require('../../static/login.svg')
-            : pageStatue === 1
-            ? require('../../static/52hz.svg')
-            : pageStatue === 2
-            ? require('../../static/more.svg')
-            : pageStatue === 3
-            ? require('../../static/past.svg')
-            : pageStatue === 4
-            ? require('../../static/tota.svg')
-            : pageStatue === 5
-            ? require('../../static/congratulate.svg')
-            : pageStatue === 6
-            ? require('../../static/totaagain.svg')
-            : require('../../static/52hz.svg')
+  <scroll-view
+    :scroll-y="tempStatue_4"
+    :scroll-top="scrollTop"
+    scroll-anchoring
+    class="scroll"
+  >
+    <view
+      class="index"
+      :style="
+        (tempStatue_4 ? 'background-color:#52b4ce;' : 'overflow-y:hidden;') +
+        (pageStatue === 4 && tempStatue_5 ? 'background-color:#FF97A1;' : '')
+      "
+    >
+      <view class="dialogBack" v-show="tempStatue_4" ref="top"> </view>
+      <u-navbar safeAreaInsetTop bgColor="#ffffff00"
+        ><template slot="left"><view></view></template
+      ></u-navbar>
+      <view class="top"
+        ><image
+          :src="
+            pageStatue === 0
+              ? require('../../static/login.svg')
+              : pageStatue === 1
+              ? require('../../static/52hz.svg')
+              : pageStatue === 2
+              ? require('../../static/more.svg')
+              : pageStatue === 3
+              ? require('../../static/past.svg')
+              : pageStatue === 4
+              ? tempStatue_5
+                ? require('../../static/congratulate.svg')
+                : personalStatue === 0
+                ? require('../../static/tota.svg')
+                : require('../../static/h' + hour + '.svg')
+              : require('../../static/52hz.svg')
+          "
+          class="text"
+          mode="heightFix" /><view
+          class="icon"
+          @click="toChange"
+          v-show="pageStatue !== 0"
+          ><view :class="'lines line__1--statue' + pageStatue"></view
+          ><view :class="'lines line__2--statue' + pageStatue"></view
+          ><view :class="'lines line__3--statue' + pageStatue"></view></view
+      ></view>
+      <view
+        :class="
+          'theWave wave_1--statue' +
+          pageStatue +
+          (pageStatue === 4 ? ' up-class' : '')
         "
-        class="text"
-        mode="heightFix" /><view
-        class="icon"
-        @click="toChange"
-        v-show="pageStatue !== 0"
-        ><view :class="'lines line__1--statue' + pageStatue"></view
-        ><view :class="'lines line__2--statue' + pageStatue"></view
-        ><view :class="'lines line__3--statue' + pageStatue"></view></view
-    ></view>
-    <view
-      :class="
-        'theWave wave_1--statue' +
-        pageStatue +
-        (pageStatue === 4 ? ' up-class' : '')
-      "
-    ></view>
-    <view
-      v-show="pageStatue === 3 || pageStatue === 2"
-      :class="'theSubWave subWave_1--statue' + pageStatue"
-    ></view>
-    <view
-      :class="
-        'theWave wave_2--statue' +
-        pageStatue +
-        (pageStatue === 4 ? ' up-class' : '')
-      "
-    ></view>
-    <view
-      :class="
-        'theWave wave_3--statue' +
-        pageStatue +
-        (pageStatue === 4 ? ' up-class' : '')
-      "
-    ></view>
-    <image
-      :class="'btnText text_1' + (pageStatue === 2 ? ' show-class' : '')"
-      src="../../static/btn_1.svg"
-      mode="heightFix"
-      @click="pageStatue = 3"
-      v-show="pageStatue === 2 || tempStatue"
-    />
-    <image
-      :class="'btnText text_2' + (pageStatue === 2 ? ' show-class' : '')"
-      src="../../static/btn_2.svg"
-      mode="heightFix"
-      v-show="pageStatue === 2 || tempStatue"
-    /><image
-      :class="'btnText text_3' + (pageStatue === 2 ? ' show-class' : '')"
-      src="../../static/btn_3.svg"
-      mode="heightFix"
-      @click="pageStatue = 0"
-      v-show="pageStatue === 2 || tempStatue"
-    />
-    <input
-      type="text"
-      placeholder="天外天账号"
-      class="account"
-      :value="account"
-      placeholder-style="color:#1C2550;opacity:0.7;font-weight:500"
-      v-if="pageStatue === 0"
-    />
-    <input
-      type="text"
-      placeholder="密码"
-      class="password"
-      :value="password"
-      placeholder-style="color:#5CD7D4;opacity:0.7;font-weight:500"
-      v-if="pageStatue === 0"
-      :password="isPassword"
-    />
-    <image
-      v-if="pageStatue === 0"
-      :src="
-        isPassword
-          ? require('../../static/eye.svg')
-          : require('../../static/eye-off.svg')
-      "
-      class="eye"
-      @click="isPassword = !isPassword"
-    />
-    <u-button
-      text="登录"
-      loadingText="登录中"
-      :loading="loginLoading"
-      :disabled="loginLoading"
-      :custom-style="btnStyle"
-      @click="toLogin"
-      v-if="pageStatue === 0"
-    ></u-button>
-    <view class="protocol" v-if="pageStatue === 0"
-      ><image
-        :src="
-          checked
-            ? require('../../static/checked.svg')
-            : require('../../static/check.svg')
+        :style="tempStatue_4 ? 'height:800rpx' : ''"
+      ></view>
+      <view
+        v-show="pageStatue === 3 || pageStatue === 2"
+        :class="'theSubWave subWave_1--statue' + pageStatue"
+      ></view>
+      <view
+        :class="
+          'theWave wave_2--statue' +
+          pageStatue +
+          (pageStatue === 4 ? ' up-class' : '')
         "
-        class="check"
-        @click="checked = !checked" />
+        v-show="!tempStatue_4 || !tempStatue_3"
+      ></view>
+      <view
+        :class="
+          'theWave wave_3--statue' +
+          pageStatue +
+          (pageStatue === 4 ? ' up-class' : '')
+        "
+        v-show="!tempStatue_4 || !tempStatue_3"
+      ></view>
+      <view
+        :class="'anchorBar' + (tempStatue_3 ? ' anchorBarShow' : '')"
+        v-show="pageStatue === 3 || tempStatue_4"
+      ></view>
       <image
-        src="../../static/protocol.svg"
-        class="protocolText"
+        :class="'anchor' + (tempStatue_3 ? ' anchorShow' : '')"
+        src="../../static/anchor.svg"
+        v-show="pageStatue === 3 || tempStatue_4"
+      />
+      <view
+        :class="
+          'subAnchorBar offset-1' + (tempStatue_3 ? ' subAnchorBarShow' : '')
+        "
+        v-show="pageStatue === 3 || tempStatue_4"
+      ></view>
+      <image
+        :class="'subAnchor offset-1' + (tempStatue_3 ? ' subAnchorShow' : '')"
+        src="../../static/anchor.svg"
+        v-show="pageStatue === 3 || tempStatue_4"
+      />
+      <view
+        :class="
+          'subAnchorBar offset-2' + (tempStatue_3 ? ' subAnchorBarShow' : '')
+        "
+        v-show="pageStatue === 3 || tempStatue_4"
+      ></view>
+      <image
+        :class="'subAnchor offset-2' + (tempStatue_3 ? ' subAnchorShow' : '')"
+        src="../../static/anchor.svg"
+        v-show="pageStatue === 3 || tempStatue_4"
+      />
+      <view
+        :class="
+          'subAnchorBar offset-3' + (tempStatue_3 ? ' subAnchorBarShow' : '')
+        "
+        v-show="pageStatue === 3 || tempStatue_4"
+      ></view>
+      <image
+        :class="'subAnchor offset-3' + (tempStatue_3 ? ' subAnchorShow' : '')"
+        src="../../static/anchor.svg"
+        v-show="pageStatue === 3 || tempStatue_4"
+      />
+      <view
+        :class="
+          'subAnchorBar offset-4' + (tempStatue_3 ? ' subAnchorBarShow' : '')
+        "
+        v-show="pageStatue === 3 || tempStatue_4"
+      ></view>
+      <image
+        :class="'subAnchor offset-4' + (tempStatue_3 ? ' subAnchorShow' : '')"
+        src="../../static/anchor.svg"
+        v-show="pageStatue === 3 || tempStatue_4"
+      />
+      <text
+        :class="'date' + (tempStatue_3 ? ' textShow' : '')"
+        v-show="pageStatue === 3 || tempStatue_4"
+        >{{ today }}</text
+      >
+      <text
+        :class="'days' + (tempStatue_3 ? ' textShow' : '')"
+        v-show="pageStatue === 3 || tempStatue_4"
+        >{{
+          personalStatue === 0
+            ? "您还没有进行告白哦~"
+            : "和 " + vuex_object + " 告白的第" + day + "天"
+        }}</text
+      >
+      <text
+        :class="'wait' + (tempStatue_3 ? ' textShow' : '')"
+        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="personalStatue === 1"
+        >也有在认真等待Ta的告白……</text
+      >
+      <view
+        class="dialog"
+        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="personalStatue === 2"
+      >
+        <view :class="'dialogContent' + (tempStatue_3 ? ' textShow' : '')">
+          <view v-for="(item, i) in messageList" :key="i"
+            ><text style="font-weight: 700">{{ ta }} 对我说</text
+            ><view class="detail">{{ item.content }}</view></view
+          ></view
+        ></view
+      >
+      <u-button
+        text="我还想说"
+        :custom-style="moreBtnStyle"
+        v-if="pageStatue === 3 && personalStatue === 2"
+        @click="toDo"
+      ></u-button>
+      <image
+        :class="'btnText text_1' + (pageStatue === 2 ? ' show-class' : '')"
+        src="../../static/btn_1.svg"
         mode="heightFix"
-    /></view>
-    <image
-      src="../../static/whale.svg"
-      :class="
-        'whale_1' +
-        (pageStatue === 1 || (pageStatue === 4 && !tempStatue_2)
-          ? ''
-          : ' hide-class')
-      "
-    />
-    <image
-      src="../../static/whale_1.svg"
-      :class="
-        'whale_2' +
-        (pageStatue === 1 || (pageStatue === 4 && !tempStatue_2)
-          ? ''
-          : ' hide-class')
-      "
-    />
-    <u-transition :show="pageStatue === 1" mode="fade">
-      <view class="waves">
-        <view
-          class="wave"
-          v-for="(item, i) in 35"
-          :key="i"
-          :style="'height:' + heights[i] + 'rpx'"
-        ></view>
-      </view>
-    </u-transition>
-    <u-transition :show="pageStatue === 4 && tempStatue_2" mode="zoom-in">
-      <view class="waves-pro">
-        <view
-          class="wave"
-          v-for="(item, i) in 35"
-          :key="i"
-          :style="'height:' + heights[i] + 'rpx'"
-        ></view>
-      </view>
-    </u-transition>
-    <image
-      :src="
-        pageStatue === 1
-          ? require('../../static/btn.svg')
-          : pageStatue === 4
-          ? require('../../static/send.svg')
-          : require('../../static/btn.svg')
-      "
-      class="btn"
-      @click="toDo"
-      v-show="pageStatue === 1 || pageStatue === 4"
-    />
-    <image
-      :class="'copyright' + (pageStatue === 2 ? ' show-class' : '')"
-      src="../../static/right.svg"
-      mode="heightFix"
-      v-show="pageStatue === 2 || tempStatue"
-    />
-    <view :class="'down' + (pageStatue === 4 ? ' down-normal' : '')">
-      <input class="name" @input="getPerson" :value="thePerson" />
-      <image src="../../static/toyou.svg" class="toYou" mode="heightFix" />
-      <view class="textContent">
-        <textarea
-          style="width: 100%; height: 100%; z-index: 11"
-          @input="refreshWave(2)"
-          :value="theText"
-          maxlength="1000"
-          :show-confirm-bar="false"
+        @click="toPast"
+        v-show="pageStatue === 2 || tempStatue"
+      />
+      <image
+        :class="'btnText text_2' + (pageStatue === 2 ? ' show-class' : '')"
+        src="../../static/btn_2.svg"
+        mode="heightFix"
+        v-show="pageStatue === 2 || tempStatue"
+      /><image
+        :class="'btnText text_3' + (pageStatue === 2 ? ' show-class' : '')"
+        src="../../static/btn_3.svg"
+        mode="heightFix"
+        @click="toLogout"
+        v-show="pageStatue === 2 || tempStatue"
+      />
+      <input
+        type="text"
+        placeholder="天外天账号"
+        class="account"
+        v-model="account"
+        placeholder-style="color:#1C2550;opacity:0.7;font-weight:400"
+        v-if="pageStatue === 0"
+      />
+      <input
+        type="text"
+        placeholder="密码"
+        class="password"
+        v-model="password"
+        placeholder-style="color:#5CD7D4;opacity:0.7;font-weight:400"
+        v-if="pageStatue === 0"
+        :password="isPassword"
+      />
+      <image
+        v-if="pageStatue === 0"
+        :src="
+          isPassword
+            ? require('../../static/eye.svg')
+            : require('../../static/eye-off.svg')
+        "
+        class="eye"
+        @click="isPassword = !isPassword"
+      />
+      <u-button
+        text="登录"
+        loadingText="登录中"
+        :loading="loginLoading"
+        :disabled="loginLoading"
+        :custom-style="btnStyle"
+        @click="toLogin"
+        v-if="pageStatue === 0"
+      ></u-button>
+      <image
+        src="../../static/whale.svg"
+        :class="
+          'whale_1' +
+          (pageStatue === 1 || (pageStatue === 4 && !tempStatue_2)
+            ? ''
+            : ' hide-class')
+        "
+      />
+      <image
+        v-if="personalStatue === 2"
+        :src="
+          genderMe === genderTa
+            ? require('../../static/whale_1.svg')
+            : require('../../static/whale_2.svg')
+        "
+        :class="
+          'whale_2' +
+          (pageStatue === 1 || (pageStatue === 4 && !tempStatue_2)
+            ? ''
+            : ' hide-class')
+        "
+      />
+      <u-transition
+        :show="pageStatue === 1"
+        mode="fade"
+        v-if="personalStatue === 1"
+      >
+        <view class="waves">
+          <view
+            class="wave"
+            v-for="(item, i) in 35"
+            :key="i"
+            :style="'height:' + heights[i] + 'rpx'"
+          ></view>
+        </view>
+      </u-transition>
+      <u-transition :show="pageStatue === 4 && tempStatue_2" mode="zoom-in">
+        <view class="waves-pro">
+          <view
+            class="wave"
+            v-for="(item, i) in 35"
+            :key="i"
+            :style="
+              'height:' +
+              heights[i] +
+              'rpx;' +
+              (tempStatue_5 ? 'background-color:#FF97A166;' : '')
+            "
+          ></view>
+        </view>
+      </u-transition>
+      <image
+        :src="
+          pageStatue === 1
+            ? require('../../static/btn.svg')
+            : pageStatue === 4
+            ? tempStatue_5
+              ? require('../../static/sendPro.svg')
+              : require('../../static/send.svg')
+            : require('../../static/btn.svg')
+        "
+        class="btn"
+        @click="toDo"
+        v-if="pageStatue === 1 || pageStatue === 4"
+      />
+      <image
+        :class="'copyright' + (pageStatue === 2 ? ' show-class' : '')"
+        src="../../static/right.svg"
+        mode="heightFix"
+        v-show="pageStatue === 2 || tempStatue"
+      />
+      <view class="protocol" v-if="pageStatue === 0"
+        ><image
+          :src="
+            checked
+              ? require('../../static/checked.svg')
+              : require('../../static/check.svg')
+          "
+          class="check"
+          @click="checked = !checked" />
+        <image
+          src="../../static/protocol.svg"
+          class="protocolText"
+          mode="heightFix"
+          @click="toProtocol"
+      /></view>
+      <view
+        :class="'down' + (pageStatue === 4 ? ' down-normal' : '')"
+        v-if="!tempStatue_4"
+        :style="
+          pageStatue === 4 && tempStatue_5 ? 'background-color:#FF97A1;' : ''
+        "
+      >
+        <input
+          class="name"
+          @input="getValue_thePerson"
+          v-model="thePerson"
+          :disabled="personalStatue !== 0"
+          placeholder="Ta 的学号或姓名"
         />
+        <image
+          :src="
+            tempStatue_5
+              ? require('../../static/toyou.svg')
+              : personalStatue === 0
+              ? require('../../static/toyou.svg')
+              : require('../../static/totaagain.svg')
+          "
+          class="toYou"
+          mode="heightFix"
+        />
+        <view
+          class="textContent"
+          :style="tempStatue_5 ? 'border-radius: 24rpx 24rpx 0px 24rpx;' : ''"
+        >
+          <textarea
+            style="width: 100%; height: 100%; z-index: 11"
+            v-model="theText"
+            maxlength="1000"
+            :show-confirm-bar="false"
+            @input="getValue_theText"
+          />
+        </view>
       </view>
     </view>
-  </view>
+    <u-notify ref="uNotify"></u-notify>
+  </scroll-view>
 </template>
 
 <script>
+import {
+  login,
+  getConfession,
+  getUserByUserNumber,
+  getUserByName,
+  addConfession,
+} from "../../api/index";
 export default {
   data() {
     return {
+      sendLoading: false,
+      personalStatue: 0,
+      scrollTop: 0,
       title: "Hello",
-      pageStatue: 1,
+      pageStatue: 0,
       password: "",
       account: "",
       thePerson: "",
       theText: "",
       loginLoading: false,
+      genderMe: "",
+      genderTa: "",
+      thatDay: "",
       heights: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -228,10 +392,60 @@ export default {
         [2, 5],
         [1, 3],
       ],
+      messageList: [
+        {
+          content: "你好你好啊啊啊啊啊啊啊",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+        {
+          content: "你好你好啊啊啊Ooo飒飒大师的",
+        },
+      ],
       isPassword: true,
       rate: 1,
       tempStatue: false,
       tempStatue_2: false,
+      tempStatue_3: false,
+      tempStatue_4: false,
+      tempStatue_5: false,
       checked: false,
       timer: null,
       btnStyle: {
@@ -249,14 +463,71 @@ export default {
         color: "#1C2550",
         fontWeight: "700",
       },
+      moreBtnStyle: {
+        position: "fixed",
+        left: "50%",
+        bottom: "50rpx",
+        bottom: "calc(50rpx + constant(safe-area-inset-bottom))",
+        bottom: "calc(50rpx + env(safe-area-inset-bottom))",
+        transform: "translateX(-50%)",
+        width: "200rpx",
+        height: "80rpx",
+        borderRadius: "24rpx",
+        margin: "0",
+        border: "1px solid #5CD7D4",
+        boxSizing: "border-box",
+        backgroundColor: "#5CD7D4",
+        color: "#1C2550",
+        fontWeight: "700",
+      },
     };
   },
   created() {
+    if (this.vuex_token) {
+      this.getInfo();
+    } else {
+      this.pageStatue = 0;
+    }
     this.timer = setInterval(() => {
-      this.refreshWave(1);
+      this.refreshWave(this.personalStatue);
     }, 200);
   },
+  computed: {
+    today() {
+      let date = new Date();
+      return `${(date.getFullYear() + "").slice(2, 4)}/${
+        date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1
+      }/${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()}`;
+    },
+    hour() {
+      let d = new Date().getHours();
+      if (d >= 0 && d < 6) return 0;
+      else if (d >= 6 && d < 8) return 1;
+      else if (d >= 8 && d < 11) return 2;
+      else if (d >= 11 && d < 13) return 3;
+      else if (d >= 13 && d < 17) return 4;
+      else if (d >= 17 && d < 19) return 5;
+      else if (d >= 19 && d < 24) return 6;
+    },
+    day() {
+      let minus = new Date() - new Date(this.thatDay);
+      return Math.ceil(minus / 86400000);
+    },
+  },
   methods: {
+    initVuex() {
+      this.$u.vuex("vuex_token", "");
+      this.$u.vuex("vuex_user", "");
+      this.$u.vuex("vuex_object", "");
+      this.$u.vuex("vuex_objectNo", "");
+    },
+    toLogout() {
+      this.toast("ヾ(￣▽￣)Bye~Bye~");
+      this.pageStatue = 0;
+      this.initVuex();
+    },
     toDo() {
       if (this.pageStatue === 1) {
         this.pageStatue = 4;
@@ -264,17 +535,163 @@ export default {
         setTimeout(() => {
           this.tempStatue_2 = true;
         }, 500);
+      } else if (this.pageStatue === 3) {
+        if (document) {
+          document.body.scrollTop = 0;
+        } else {
+          this.goTop();
+        }
+        setTimeout(() => {
+          this.tempStatue_3 = false;
+          this.tempStatue_4 = false;
+          setTimeout(() => {
+            this.pageStatue = 4;
+            this.tempStatue = true;
+            clearInterval(this.timer);
+            setTimeout(() => {
+              this.tempStatue_2 = true;
+            }, 500);
+          }, 500);
+        }, 10);
+      } else if (this.pageStatue === 4) {
+        if (this.tempStatue_5) {
+          this.heights.map((item, i, self) => {
+            this.$set(self, i, 0);
+          });
+          this.timer = setInterval(() => {
+            this.refreshWave(this.personalStatue);
+          }, 200);
+          this.pageStatue = 1;
+          this.tempStatue_2 = false;
+          setTimeout(() => {
+            if (this.pageStatue !== 4) this.tempStatue_5 = false;
+          }, 1000);
+          return;
+        }
+        if (this.sendLoading) {
+          this.toast("正在发送哦~");
+          return;
+        }
+        if (!this.thePerson) {
+          this.toast("请输入Ta的学号或姓名哦~");
+          return;
+        }
+        if (!this.theText) {
+          this.toast("对Ta说点什么吧~");
+          return;
+        }
+        this.sendLoading = true;
+        let personList = [];
+        if (/^\d{10}$/.test(this.thePerson)) {
+          getUserByUserNumber({ userNumber: this.thePerson })
+            .then(({ result: res }) => {
+              if (res.length === 0) {
+                this.toast("我们也没能找到Ta，检查一下信息吧~");
+                this.sendLoading = false;
+              } else {
+                if (res.length === 1 && res[0].userNumber === this.vuex_user) {
+                  this.toast("嘻嘻，知道你喜欢自己啦~");
+                  this.sendLoading = false;
+                } else {
+                  for (let i = 0; i < res.length; i++) {
+                    if (res[i].userNumber !== this.vuex_user) {
+                      personList.push(res[i].userNumber);
+                    }
+                  }
+                  this.sendMsg(personList);
+                }
+              }
+            })
+            .catch(() => {
+              this.toast("寻找Ta遇到问题了，请联系管理员~");
+              this.sendLoading = false;
+            });
+        } else {
+          getUserByName({ userName: this.thePerson })
+            .then(({ result: res }) => {
+              if (res.length === 0) {
+                this.toast("我们也没能找到Ta，检查一下信息吧~");
+                this.sendLoading = false;
+              } else {
+                if (res.length === 1 && res[0].userNumber === this.vuex_user) {
+                  this.toast("嘻嘻，知道你喜欢自己啦~");
+                  this.sendLoading = false;
+                } else {
+                  for (let i = 0; i < res.length; i++) {
+                    if (res[i].userNumber !== this.vuex_user) {
+                      personList.push(res[i].userNumber);
+                    }
+                  }
+                  this.sendMsg(personList);
+                }
+              }
+            })
+            .catch(() => {
+              this.toast("寻找Ta遇到问题了，请联系管理员~");
+              this.sendLoading = false;
+            });
+        }
       }
-      // this.rate = this.rate === 1 ? 2 : 1;
-      // if (this.rate === 1) {
-      //   this.heights.map((item, i, self) => {
-      //     this.$set(self, i, 0);
-      //   });
-      // }
     },
-    getPerson(val) {
+    sendMsg(val) {
+      let promiseArr = [];
+      let add0 = (x) => (x < 10 ? "0" + x : x);
+      let date = new Date();
+      let now =
+        date.getFullYear() +
+        "-" +
+        add0(date.getMonth() + 1) +
+        "-" +
+        add0(date.getDate()) +
+        " " +
+        add0(date.getHours()) +
+        ":" +
+        add0(date.getMinutes()) +
+        ":" +
+        add0(date.getSeconds());
+      for (let i = 0; i < val.length; i++) {
+        promiseArr.push(
+          addConfession({
+            token: this.vuex_token,
+            confessionName: "-",
+            pursuit: val[i],
+            content: "-",
+            addition: this.theText,
+            date: now,
+          })
+        );
+      }
+      Promise.all(promiseArr)
+        .then((res) => {
+          let flag = true;
+          for (let i = 0; i < res.length; i++) {
+            if (res[i].code !== 0) {
+              flag = false;
+            }
+          }
+          if (flag) {
+            this.toast("告白成功，等待好消息吧！");
+            this.thePerson = "";
+            this.theText = "";
+            this.toChange();
+          } else this.toast("告白可能失败了，请重试~");
+          this.sendLoading = false;
+        })
+        .catch(() => {
+          this.toast("告白失败了，请重试~");
+          this.sendLoading = false;
+        });
+    },
+    toProtocol() {
+      uni.$u.route({
+        url: "pages/protocol/index",
+      });
+    },
+    getValue_theText() {
       this.refreshWave(2);
-      this.throttle(this.allQueryData, null, 1000, val.detail.value);
+    },
+    getValue_thePerson() {
+      this.refreshWave(2);
     },
     toChange() {
       if (this.pageStatue === 1) {
@@ -286,8 +703,12 @@ export default {
         this.pageStatue = 1;
         this.tempStatue = false;
       } else if (this.pageStatue === 3) {
-        this.pageStatue = 2;
         setTimeout(() => {
+          this.pageStatue = 2;
+        }, 10);
+        this.tempStatue_3 = false;
+        setTimeout(() => {
+          this.tempStatue_4 = false;
           if (this.pageStatue === 2) this.tempStatue = true;
         }, 1000);
       } else if (this.pageStatue === 4) {
@@ -295,18 +716,107 @@ export default {
           this.$set(self, i, 0);
         });
         this.timer = setInterval(() => {
-          this.refreshWave(1);
+          this.refreshWave(this.personalStatue);
         }, 200);
         this.pageStatue = 1;
         this.tempStatue_2 = false;
+        if (this.tempStatue_5)
+          setTimeout(() => {
+            if (this.pageStatue !== 4) this.tempStatue_5 = false;
+          }, 1000);
       }
     },
+    toast(msg) {
+      this.$refs.uNotify.show({
+        message: msg,
+        duration: 2000,
+        safeAreaInsetTop: true,
+      });
+    },
     toLogin() {
+      if (!this.checked) {
+        this.toast("请您先阅读我们的隐私政策，同意后方可登录哦~");
+        return;
+      }
+      if (!this.account) {
+        this.toast("请输入您的天外天账号哦~");
+        return;
+      }
+      if (!this.password) {
+        this.toast("请输入您的密码哦~");
+        return;
+      }
       this.loginLoading = true;
+      login({ account: this.account, password: this.password })
+        .then(({ result: res }) => {
+          this.genderMe = res.gender;
+          this.$u.vuex("vuex_token", res.token);
+          this.$u.vuex("vuex_user", res.userNumber);
+          this.getInfo();
+        })
+        .catch(() => {
+          this.initVuex();
+          this.toast("账号或密码错误，再仔细检查一下吧！");
+          this.loginLoading = false;
+          this.password = "";
+        });
+    },
+    getInfo() {
+      getConfession({ token: this.vuex_token })
+        .then(({ result: res }) => {
+          if (res.length === 0) {
+            this.personalStatue = 0;
+          } else {
+            if (res[0].isMatch === 1) {
+              this.personalStatue = 2;
+            } else {
+              this.personalStatue = 1;
+            }
+            this.thatDay = res[0].date;
+            this.$u.vuex("vuex_objectNo", res[0].pursuit);
+            getUserByUserNumber({ userNumber: res[0].pursuit }).then(
+              ({ result: res }) => {
+                if (res.length > 0) {
+                  this.genderTa = res[0].gender;
+                  this.$u.vuex("vuex_object", res[0].realname);
+                  this.thePerson = res[0].realname;
+                } else {
+                  this.$u.vuex("vuex_object", "Ta");
+                  this.thePerson = "Ta";
+                }
+              }
+            );
+          }
+          this.toast("登录成功");
+          this.loginLoading = false;
+          if (this.personalStatue === 2) {
+            this.pageStatue = 4;
+            this.tempStatue_5 = true;
+          } else {
+            this.pageStatue = 1;
+          }
+        })
+        .catch(() => {
+          this.toast("非常抱歉，获取用户信息失败，请联系管理员解决！");
+          this.initVuex();
+          this.loginLoading = false;
+          this.password = "";
+        });
+    },
+    toPast() {
+      this.pageStatue = 3;
       setTimeout(() => {
-        this.loginLoading = false;
-        this.pageStatue = 1;
-      }, 2000);
+        if (this.pageStatue === 3) {
+          this.tempStatue_3 = true;
+          this.tempStatue_4 = true;
+        }
+      }, 1000);
+    },
+    goTop() {
+      this.scrollTop = 1;
+      setTimeout(() => {
+        this.scrollTop = 0;
+      }, 0);
     },
     refreshWave(rate) {
       for (let i = 0; i < rate * 7; i++) {
@@ -337,16 +847,25 @@ export default {
 </script>
 
 <style scope lang='scss'>
+.scroll {
+  height: 100vh !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  font-family: Product Sans;
+  max-width: 450px;
+  margin: 0 auto;
+}
 .index {
   background-color: #5cd7d4;
   position: relative;
-  overflow: hidden;
   width: 100vw;
   max-width: 450px;
   margin: 0 auto;
-  height: 100vh;
+  min-height: 100vh;
   padding: 0 32rpx;
   box-sizing: border-box;
+  padding-bottom: 0;
+  overflow-x: hidden;
   .top {
     width: 100%;
     display: flex;
@@ -442,7 +961,7 @@ export default {
     top: 500rpx !important;
   }
   .text_2 {
-    top: 750rpx !important;
+    top: 751rpx !important;
   }
   .text_3 {
     top: 1000rpx !important;
@@ -460,7 +979,7 @@ export default {
   }
   .password {
     position: absolute;
-    top: 750rpx;
+    top: 751rpx;
     left: 50%;
     transform: translateX(calc(-50% - 40rpx));
     width: 400rpx;
@@ -477,21 +996,176 @@ export default {
     width: 48rpx;
     height: 48rpx;
   }
-  .theWave {
-    width: 2880rpx;
-    height: 1200rpx;
+  .anchorBar {
     position: absolute;
-    background-repeat: repeat-x;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00284c;
+    border-radius: 5rpx;
+    width: 10rpx;
+    height: 60rpx;
+    top: 300rpx;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .anchorBarShow {
+    transition: all 0.5s ease-in !important;
+    height: 116rpx !important;
+    opacity: 1 !important;
+  }
+  .anchor {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 64rpx;
+    height: 64rpx;
+    top: 354rpx;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .anchorShow {
+    transition: all 0.5s ease-in !important;
+    top: 410rpx !important;
+    opacity: 1 !important;
+  }
+  .subAnchorBar {
+    position: absolute;
+    left: 50%;
+    background-color: #00284c;
+    border-radius: 5rpx;
+    width: 6rpx;
+    height: 35rpx;
+    top: 300rpx;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .subAnchorBarShow {
+    transition: all 0.5s ease-in !important;
+    height: 85rpx !important;
+    opacity: 1 !important;
+  }
+  .subAnchor {
+    position: absolute;
+    left: 50%;
+    width: 36rpx;
+    height: 36rpx;
+    top: 330rpx;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .subAnchorShow {
+    transition: all 0.5s ease-in !important;
+    top: 380rpx !important;
+    opacity: 1 !important;
+  }
+  .offset-1 {
+    transform: translateX(calc(-50% - 320rpx));
+  }
+  .offset-2 {
+    transform: translateX(calc(-50% - 160rpx));
+  }
+  .offset-3 {
+    transform: translateX(calc(-50% + 160rpx));
+  }
+  .offset-4 {
+    transform: translateX(calc(-50% + 320rpx));
+  }
+  .date {
+    position: absolute;
+    top: 480rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48rpx;
+    font-weight: 700;
+    color: #00284c;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .days {
+    position: absolute;
+    top: 550rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32rpx;
+    font-weight: 700;
+    text-align: center;
+    width: 100%;
+    color: #00284c;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .wait {
+    position: absolute;
+    top: 594rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32rpx;
+    font-weight: 700;
+    text-align: center;
+    width: 100%;
+    color: #00284c;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .textShow {
+    transition: opacity 1s ease-in !important;
+    opacity: 1 !important;
+  }
+  .dialog {
+    position: relative;
+    margin-top: 420rpx;
+    width: 100%;
+    margin-bottom: 240rpx;
+    margin-bottom: calc(240rpx + constant(safe-area-inset-bottom));
+    margin-bottom: calc(240rpx + env(safe-area-inset-bottom));
+    border-radius: 32rpx;
+  }
+  .dialogBack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 500rpx;
+    width: 100vw;
+    background-color: #5cd7d4;
+  }
+  .dialogContent {
+    width: calc(100% - 64rpx);
+    padding: 32rpx;
+    box-sizing: border-box;
+    margin: 0 32rpx;
+    margin-bottom: 240rpx;
+    margin-bottom: calc(240rpx + constant(safe-area-inset-bottom));
+    margin-bottom: calc(240rpx + env(safe-area-inset-bottom));
+    border-radius: 32rpx;
+    background-color: #00284c;
+    opacity: 0;
+    transition: opacity 0.1s ease-in;
+    color: #fff;
+    font-size: 28rpx;
+    .detail {
+      color: black;
+      background-color: #fff;
+      padding: 16rpx;
+      border-radius: 0px 18rpx 18rpx 18rpx;
+      margin-top: 10rpx;
+      margin-bottom: 20rpx;
+    }
+  }
+  .theWave {
+    width: 3840rpx;
+    height: 1100rpx;
+    position: absolute;
     transition: all 1s;
+    background-size: auto 100%;
   }
   .theSubWave {
-    width: 2400rpx;
+    width: 3840rpx;
     height: 800rpx;
     position: absolute;
     background-repeat: repeat-x;
     transition: transform 1s;
     right: 50%;
-    top: 600rpx;
+    top: 500rpx;
     background-image: url("~@/static/wave_1.png");
   }
   .subWave_1--statue3 {
@@ -505,6 +1179,7 @@ export default {
     height: 1600rpx;
     background-image: url("~@/static/wave_1.png");
     animation: slideshow 15s linear infinite;
+    background-size: 3840rpx 1600rpx !important;
   }
   .wave_2--statue0,
   .wave_2--statue2 {
@@ -512,6 +1187,7 @@ export default {
     top: 650rpx;
     background-image: url("~@/static/wave_2.png");
     animation: slideshow-reverse 15s linear infinite;
+    background-size: 800rpx 1200rpx !important;
   }
   .wave_3--statue0,
   .wave_3--statue2 {
@@ -519,6 +1195,7 @@ export default {
     top: 900rpx;
     background-image: url("~@/static/wave_3.png");
     animation: slideshow 15s linear infinite;
+    background-size: 800rpx 1200rpx !important;
   }
   .wave_1--statue1,
   .wave_1--statue4 {
@@ -527,6 +1204,7 @@ export default {
     height: 1600rpx;
     background-image: url("~@/static/wave_1.png");
     animation: slideshow 15s linear infinite;
+    background-size: 3840rpx 1600rpx !important;
   }
   .wave_1--statue4 {
     top: 400rpx;
@@ -540,6 +1218,7 @@ export default {
     top: 500rpx;
     background-image: url("~@/static/wave_2.png");
     animation: slideshow-reverse 15s linear infinite;
+    background-size: 800rpx 1200rpx !important;
   }
   .wave_3--statue1,
   .wave_3--statue4 {
@@ -547,23 +1226,27 @@ export default {
     top: 600rpx;
     background-image: url("~@/static/wave_3.png");
     animation: slideshow 15s linear infinite;
+    background-size: 800rpx 1200rpx !important;
   }
   .wave_1--statue3 {
     left: 50%;
     transform: translateX(-50%);
     top: 300rpx;
     height: 1600rpx;
+    background-size: 3840rpx 1600rpx !important;
     background-image: url("~@/static/wave_1.png");
   }
   .wave_2--statue3 {
     right: 0;
     top: 100vh;
     background-image: url("~@/static/wave_2.png");
+    background-size: 800rpx 1200rpx !important;
   }
   .wave_3--statue3 {
     right: 0;
     top: 100vh;
     background-image: url("~@/static/wave_3.png");
+    background-size: 800rpx 1200rpx !important;
   }
   .whale_1 {
     position: absolute;
@@ -622,7 +1305,7 @@ export default {
   .btn {
     width: 144rpx;
     height: 144rpx;
-    position: absolute;
+    position: fixed !important;
     left: 50%;
     transform: translateX(-50%);
     bottom: 60rpx;
@@ -644,7 +1327,7 @@ export default {
     position: relative;
     top: 100vh;
     width: 100%;
-    height: 100%;
+    min-height: 1000rpx;
     overflow: hidden;
     transition: all 0.5s ease-in;
     background-color: #5cd7d4;

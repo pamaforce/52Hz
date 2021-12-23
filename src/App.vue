@@ -1,18 +1,10 @@
 <style lang="scss">
 @import "uview-ui/index.scss";
+@import "~@/static/font.css";
 </style>
 <script>
-// import { getUser } from "./api/index";
 export default {
-  onLaunch: function () {
-    // getUser({ account: "3020205094", password: "121221" })
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-  },
+  onLaunch: function () {},
   onShow: function () {
     console.log("App Show");
   },
