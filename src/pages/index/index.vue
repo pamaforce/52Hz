@@ -52,7 +52,7 @@
           pageStatue +
           (pageStatue === 4 ? ' up-class' : '')
         "
-        :style="tempStatue_4 ? 'height:800rpx' : ''"
+        :style="(tempStatue_4 ? 'height:800rpx;' : '')+(tempStatue_8?'z-index:-1;':'')"
       ></view>
       <view
         v-show="pageStatue === 3 || pageStatue === 2 || pageStatue === 5"
@@ -64,6 +64,7 @@
           pageStatue +
           (pageStatue === 4 ? ' up-class' : '')
         "
+        :style="tempStatue_8?'z-index:-1;':''"
         v-show="!tempStatue_4 || !tempStatue_3"
       ></view>
       <view
@@ -72,6 +73,7 @@
           pageStatue +
           (pageStatue === 4 ? ' up-class' : '')
         "
+        :style="tempStatue_8?'z-index:-1;':''"
         v-show="!tempStatue_4 || !tempStatue_3"
       ></view>
       <image src="../../static/whale_1.svg" :class="'aboutWhale'+(tempStatue_7 ? ' textShow' : '')" 
@@ -159,8 +161,8 @@
       >
         <view :class="'dialogContent' + (tempStatue_3 ? ' textShow' : '')">
           <view v-for="(item, i) in messageList" :key="i"
-            ><text style="font-weight: 700" v-if="item.pursuit===vuex_user">{{ vuex_object }} 对我说</text
-            ><text style="font-weight: 700" v-else>我对 {{vuex_object}} 说</text
+            ><text style="font-weight: 700" v-if="item.pursuit===vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">{{ vuex_object }} 对我说</text
+            ><text style="font-weight: 700" v-if="item.pursuit!==vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">我对 {{vuex_object}} 说</text
             ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable>{{ item.addition }}</text></view></view
           ></view
         ></view
@@ -173,7 +175,7 @@
       ></u-button>
       <image
         :class="'btnText text_1' + (pageStatue === 2 ? ' show-class' : '')"
-        src="../../static/btn_1.svg"
+        src="../../static/past.svg"
         mode="heightFix"
         @click="toPast"
         v-show="pageStatue === 2 || tempStatue"
@@ -357,22 +359,23 @@
       ref="uNotify"
       style="max-width: 450px !important; margin: 0 auto"
     ></u-notify>
-    <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确认是Ta了就不能反悔了哦~" style="text-align:center" @confirm="toConfirm"></u-modal>
+    <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确认是Ta了就不能反悔了哦~" style="text-align:center" @confirm="toConfirm" @cancel="dialogShow=false"></u-modal>
   </scroll-view>
 </template>
 
 <script>
-// const { aplus_queue } = window;
-// aplus_queue.push({
-//   action: "aplus.sendPV",
-//   arguments: [{ is_auto: false }],
-// });
+const { aplus_queue } = window;
+aplus_queue.push({
+  action: "aplus.sendPV",
+  arguments: [{ is_auto: false }],
+});
 import {
   login,
   getConfession,
   getUserByUserNumber,
   getUserByName,
   addConfession,
+  getConfessionByPursuit,
 } from "../../api/index";
 export default {
   data() {
@@ -421,6 +424,7 @@ export default {
       tempStatue_5: false,
       tempStatue_6: false,
       tempStatue_7: false,
+      tempStatue_8: false,
       checked: false,
       timer: null,
       btnStyle: {
@@ -518,6 +522,9 @@ export default {
         setTimeout(() => {
           this.tempStatue_2 = true;
         }, 500);
+        setTimeout(() => {
+          if (this.pageStatue === 4) this.tempStatue_8 = true;
+        }, 1000);
       } else if (this.pageStatue === 3) {
         if (document) {
           document.body.scrollTop = 0;
@@ -532,6 +539,7 @@ export default {
             this.tempStatue = true;
             clearInterval(this.timer);
             setTimeout(() => {
+              if (this.pageStatue === 4) this.tempStatue_8 = true;
               this.tempStatue_2 = true;
             }, 500);
           }, 500);
@@ -544,6 +552,7 @@ export default {
           this.timer = setInterval(() => {
             this.refreshWave(this.personalStatue);
           }, 200);
+          this.tempStatue_8 = false;
           this.pageStatue = 1;
           this.tempStatue_2 = false;
           setTimeout(() => {
@@ -570,7 +579,16 @@ export default {
         }
       }
     },
+    sortByTime(arr) {
+      let compare = (property) => {
+        return function (a, b) {
+          return new Date(a[property]) - new Date(b[property]);
+        };
+      };
+      arr.sort(compare("date"));
+    },
     toConfirm() {
+      this.dialogShow = false;
       this.sendLoading = true;
       let personList = [];
       if (/^\d{10}$/.test(this.thePerson)) {
@@ -663,12 +681,41 @@ export default {
             if (this.personalStatue === 0)
               this.toast("告白成功，等待好消息吧！");
             else this.toast("我们已为您精准送达~");
-            this.thePerson = "";
             this.theText = "";
             this.toChange();
             getConfession({ token: this.vuex_token }).then(
               ({ result: res }) => {
                 this.messageList = res;
+                if (res.length === 0) {
+                  this.personalStatue = 0;
+                } else {
+                  if (res[0].isMatch === 1) {
+                    this.personalStatue = 2;
+                    getConfessionByPursuit({
+                      pursuit: res[0].pursuit,
+                      token: this.vuex_token,
+                    }).then(({ result: res }) => {
+                      this.messageList.push(...res);
+                      this.sortByTime(this.messageList);
+                    });
+                  } else {
+                    this.personalStatue = 1;
+                  }
+                  this.thatDay = res[0].date;
+                  this.$u.vuex("vuex_objectNo", res[0].pursuit);
+                  getUserByUserNumber({ userNumber: res[0].pursuit }).then(
+                    ({ result: res }) => {
+                      if (res.length > 0) {
+                        this.genderTa = res[0].gender;
+                        this.$u.vuex("vuex_object", res[0].realname);
+                        this.thePerson = res[0].realname;
+                      } else {
+                        this.$u.vuex("vuex_object", "");
+                        this.thePerson = "";
+                      }
+                    }
+                  );
+                }
               }
             );
           } else {
@@ -722,6 +769,7 @@ export default {
         this.timer = setInterval(() => {
           this.refreshWave(this.personalStatue);
         }, 200);
+        this.tempStatue_8 = false;
         this.pageStatue = 1;
         this.tempStatue_2 = false;
         if (this.tempStatue_5)
@@ -775,6 +823,13 @@ export default {
           } else {
             if (res[0].isMatch === 1) {
               this.personalStatue = 2;
+              getConfessionByPursuit({
+                pursuit: res[0].pursuit,
+                token: this.vuex_token,
+              }).then(({ result: res }) => {
+                this.messageList.push(...res);
+                this.sortByTime(this.messageList);
+              });
             } else {
               this.personalStatue = 1;
             }
@@ -795,12 +850,12 @@ export default {
           }
           this.toast("登录成功");
           this.loginLoading = false;
-          if (this.personalStatue === 2) {
-            this.pageStatue = 4;
-            //this.tempStatue_5 = true; //恭喜文案
-          } else {
-            this.pageStatue = 1;
-          }
+          //if (this.personalStatue === 2) {//恭喜文案
+          //this.pageStatue = 4;
+          //this.tempStatue_5 = true;
+          //} else {
+          this.pageStatue = 1;
+          //}
         })
         .catch(() => {
           this.toast("非常抱歉，获取用户信息失败，请联系管理员解决！");

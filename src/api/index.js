@@ -39,3 +39,11 @@ export function addConfession(data) {
         data
     })
 }
+
+export function getConfessionByPursuit(data) {
+    return service({
+        url: 'getConfessionByPursuit',
+        method: "GET",
+        data
+    })
+}
