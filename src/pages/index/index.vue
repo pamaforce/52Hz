@@ -13,7 +13,7 @@
       "
     >
       <view class="dialogBack" v-show="tempStatue_4" ref="top"> </view>
-      <u-navbar safeAreaInsetTop bgColor="#ffffff00"
+      <u-navbar safeAreaInsetTop bgColor="#ffffff00 !important"
         ><template slot="left"><view></view></template
       ></u-navbar>
       <view class="top"
@@ -33,6 +33,8 @@
                 : personalStatue === 0
                 ? require('../../static/tota.svg')
                 : require('../../static/h' + hour + '.svg')
+              : pageStatue === 5
+              ? require('../../static/about.svg')
               : require('../../static/52hz.svg')
           "
           class="text"
@@ -53,7 +55,7 @@
         :style="tempStatue_4 ? 'height:800rpx' : ''"
       ></view>
       <view
-        v-show="pageStatue === 3 || pageStatue === 2"
+        v-show="pageStatue === 3 || pageStatue === 2 || pageStatue === 5"
         :class="'theSubWave subWave_1--statue' + pageStatue"
       ></view>
       <view
@@ -72,6 +74,10 @@
         "
         v-show="!tempStatue_4 || !tempStatue_3"
       ></view>
+      <image src="../../static/whale_1.svg" :class="'aboutWhale'+(tempStatue_7 ? ' textShow' : '')" 
+        v-show="pageStatue === 5 || tempStatue_6">
+      <image src="../../static/aboutText.svg" :class="'aboutText'+(tempStatue_7 ? ' textShow' : '')" mode="widthFix" 
+        v-show="pageStatue === 5 || tempStatue_6">
       <view
         :class="'anchorBar' + (tempStatue_3 ? ' anchorBarShow' : '')"
         v-show="pageStatue === 3 || tempStatue_4"
@@ -148,19 +154,21 @@
       <view
         class="dialog"
         v-show="pageStatue === 3 || tempStatue_4"
-        v-if="personalStatue === 2"
+        v-if="personalStatue !== 0"
+        :style="personalStatue===1?'margin-top:460rpx':''"
       >
         <view :class="'dialogContent' + (tempStatue_3 ? ' textShow' : '')">
           <view v-for="(item, i) in messageList" :key="i"
-            ><text style="font-weight: 700">{{ ta }} 对我说</text
-            ><view class="detail">{{ item.content }}</view></view
+            ><text style="font-weight: 700" v-if="item.pursuit===vuex_user">{{ vuex_object }} 对我说</text
+            ><text style="font-weight: 700" v-else>我对 {{vuex_object}} 说</text
+            ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable>{{ item.addition }}</text></view></view
           ></view
         ></view
       >
       <u-button
         text="我还想说"
         :custom-style="moreBtnStyle"
-        v-if="pageStatue === 3 && personalStatue === 2"
+        v-if="pageStatue === 3 && personalStatue !== 0"
         @click="toDo"
       ></u-button>
       <image
@@ -174,6 +182,7 @@
         :class="'btnText text_2' + (pageStatue === 2 ? ' show-class' : '')"
         src="../../static/btn_2.svg"
         mode="heightFix"
+        @click="toAbout"
         v-show="pageStatue === 2 || tempStatue"
       /><image
         :class="'btnText text_3' + (pageStatue === 2 ? ' show-class' : '')"
@@ -344,11 +353,20 @@
         </view>
       </view>
     </view>
-    <u-notify ref="uNotify"></u-notify>
+    <u-notify
+      ref="uNotify"
+      style="max-width: 450px !important; margin: 0 auto"
+    ></u-notify>
+    <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确认是Ta了就不能反悔了哦~" style="text-align:center" @confirm="toConfirm"></u-modal>
   </scroll-view>
 </template>
 
 <script>
+// const { aplus_queue } = window;
+// aplus_queue.push({
+//   action: "aplus.sendPV",
+//   arguments: [{ is_auto: false }],
+// });
 import {
   login,
   getConfession,
@@ -369,6 +387,7 @@ export default {
       thePerson: "",
       theText: "",
       loginLoading: false,
+      dialogShow: false,
       genderMe: "",
       genderTa: "",
       thatDay: "",
@@ -392,53 +411,7 @@ export default {
         [2, 5],
         [1, 3],
       ],
-      messageList: [
-        {
-          content: "你好你好啊啊啊啊啊啊啊",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-        {
-          content: "你好你好啊啊啊Ooo飒飒大师的",
-        },
-      ],
+      messageList: [],
       isPassword: true,
       rate: 1,
       tempStatue: false,
@@ -446,6 +419,8 @@ export default {
       tempStatue_3: false,
       tempStatue_4: false,
       tempStatue_5: false,
+      tempStatue_6: false,
+      tempStatue_7: false,
       checked: false,
       timer: null,
       btnStyle: {
@@ -481,6 +456,14 @@ export default {
         fontWeight: "700",
       },
     };
+  },
+  onLoad(options) {
+    if (options.token) {
+      this.getInfo();
+      this.timer = setInterval(() => {
+        this.refreshWave(this.personalStatue);
+      }, 200);
+    }
   },
   created() {
     if (this.vuex_token) {
@@ -580,57 +563,64 @@ export default {
           this.toast("对Ta说点什么吧~");
           return;
         }
-        this.sendLoading = true;
-        let personList = [];
-        if (/^\d{10}$/.test(this.thePerson)) {
-          getUserByUserNumber({ userNumber: this.thePerson })
-            .then(({ result: res }) => {
-              if (res.length === 0) {
-                this.toast("我们也没能找到Ta，检查一下信息吧~");
-                this.sendLoading = false;
-              } else {
-                if (res.length === 1 && res[0].userNumber === this.vuex_user) {
-                  this.toast("嘻嘻，知道你喜欢自己啦~");
-                  this.sendLoading = false;
-                } else {
-                  for (let i = 0; i < res.length; i++) {
-                    if (res[i].userNumber !== this.vuex_user) {
-                      personList.push(res[i].userNumber);
-                    }
-                  }
-                  this.sendMsg(personList);
-                }
-              }
-            })
-            .catch(() => {
-              this.toast("寻找Ta遇到问题了，请联系管理员~");
-              this.sendLoading = false;
-            });
+        if (this.personalStatue === 0) {
+          this.dialogShow = true;
         } else {
-          getUserByName({ userName: this.thePerson })
-            .then(({ result: res }) => {
-              if (res.length === 0) {
-                this.toast("我们也没能找到Ta，检查一下信息吧~");
+          this.toConfirm();
+        }
+      }
+    },
+    toConfirm() {
+      this.sendLoading = true;
+      let personList = [];
+      if (/^\d{10}$/.test(this.thePerson)) {
+        getUserByUserNumber({ userNumber: this.thePerson })
+          .then(({ result: res }) => {
+            if (res.length === 0) {
+              this.toast("我们也没能找到Ta，检查一下信息吧~");
+              this.sendLoading = false;
+            } else {
+              if (res.length === 1 && res[0].userNumber === this.vuex_user) {
+                this.toast("嘻嘻，知道你喜欢自己啦~");
                 this.sendLoading = false;
               } else {
-                if (res.length === 1 && res[0].userNumber === this.vuex_user) {
-                  this.toast("嘻嘻，知道你喜欢自己啦~");
-                  this.sendLoading = false;
-                } else {
-                  for (let i = 0; i < res.length; i++) {
-                    if (res[i].userNumber !== this.vuex_user) {
-                      personList.push(res[i].userNumber);
-                    }
+                for (let i = 0; i < res.length; i++) {
+                  if (res[i].userNumber !== this.vuex_user) {
+                    personList.push(res[i].userNumber);
                   }
-                  this.sendMsg(personList);
                 }
+                this.sendMsg(personList);
               }
-            })
-            .catch(() => {
-              this.toast("寻找Ta遇到问题了，请联系管理员~");
+            }
+          })
+          .catch(() => {
+            this.toast("寻找Ta遇到问题了，请联系管理员~");
+            this.sendLoading = false;
+          });
+      } else {
+        getUserByName({ userName: this.thePerson })
+          .then(({ result: res }) => {
+            if (res.length === 0) {
+              this.toast("我们也没能找到Ta，检查一下信息吧~");
               this.sendLoading = false;
-            });
-        }
+            } else {
+              if (res.length === 1 && res[0].userNumber === this.vuex_user) {
+                this.toast("嘻嘻，知道你喜欢自己啦~");
+                this.sendLoading = false;
+              } else {
+                for (let i = 0; i < res.length; i++) {
+                  if (res[i].userNumber !== this.vuex_user) {
+                    personList.push(res[i].userNumber);
+                  }
+                }
+                this.sendMsg(personList);
+              }
+            }
+          })
+          .catch(() => {
+            this.toast("寻找Ta遇到问题了，请联系管理员~");
+            this.sendLoading = false;
+          });
       }
     },
     sendMsg(val) {
@@ -670,15 +660,27 @@ export default {
             }
           }
           if (flag) {
-            this.toast("告白成功，等待好消息吧！");
+            if (this.personalStatue === 0)
+              this.toast("告白成功，等待好消息吧！");
+            else this.toast("我们已为您精准送达~");
             this.thePerson = "";
             this.theText = "";
             this.toChange();
-          } else this.toast("告白可能失败了，请重试~");
+            getConfession({ token: this.vuex_token }).then(
+              ({ result: res }) => {
+                this.messageList = res;
+              }
+            );
+          } else {
+            if (this.personalStatue === 0)
+              this.toast("告白可能失败了，请重试~");
+            else this.toast("好像没能为您送达消息……");
+          }
           this.sendLoading = false;
         })
         .catch(() => {
-          this.toast("告白失败了，请重试~");
+          if (this.personalStatue === 0) this.toast("告白可能失败了，请重试~");
+          else this.toast("好像没能为您送达消息……");
           this.sendLoading = false;
         });
     },
@@ -702,13 +704,15 @@ export default {
       } else if (this.pageStatue === 2) {
         this.pageStatue = 1;
         this.tempStatue = false;
-      } else if (this.pageStatue === 3) {
+      } else if (this.pageStatue === 3 || this.pageStatue === 5) {
         setTimeout(() => {
           this.pageStatue = 2;
         }, 10);
+        this.tempStatue_7 = false;
         this.tempStatue_3 = false;
         setTimeout(() => {
           this.tempStatue_4 = false;
+          this.tempStatue_6 = false;
           if (this.pageStatue === 2) this.tempStatue = true;
         }, 1000);
       } else if (this.pageStatue === 4) {
@@ -731,6 +735,7 @@ export default {
         message: msg,
         duration: 2000,
         safeAreaInsetTop: true,
+        top: "0rpx",
       });
     },
     toLogin() {
@@ -764,6 +769,7 @@ export default {
     getInfo() {
       getConfession({ token: this.vuex_token })
         .then(({ result: res }) => {
+          this.messageList = res;
           if (res.length === 0) {
             this.personalStatue = 0;
           } else {
@@ -791,7 +797,7 @@ export default {
           this.loginLoading = false;
           if (this.personalStatue === 2) {
             this.pageStatue = 4;
-            this.tempStatue_5 = true;
+            //this.tempStatue_5 = true; //恭喜文案
           } else {
             this.pageStatue = 1;
           }
@@ -809,6 +815,15 @@ export default {
         if (this.pageStatue === 3) {
           this.tempStatue_3 = true;
           this.tempStatue_4 = true;
+        }
+      }, 1000);
+    },
+    toAbout() {
+      this.pageStatue = 5;
+      setTimeout(() => {
+        if (this.pageStatue === 5) {
+          this.tempStatue_7 = true;
+          this.tempStatue_6 = true;
         }
       }, 1000);
     },
@@ -901,6 +916,7 @@ export default {
         top: 41rpx;
         left: 9rpx;
       }
+      .line__1--statue5,
       .line__1--statue3,
       .line__1--statue2 {
         top: 15rpx;
@@ -908,12 +924,14 @@ export default {
         width: 36rpx;
         transform: rotate(-30deg);
       }
+      .line__2--statue5,
       .line__2--statue3,
       .line__2--statue2 {
         top: 24rpx;
         left: 9rpx;
         height: 9rpx;
       }
+      .line__3--statue5,
       .line__3--statue3,
       .line__3--statue2 {
         top: 35rpx;
@@ -1111,6 +1129,25 @@ export default {
     transition: opacity 1s ease-in !important;
     opacity: 1 !important;
   }
+  .aboutWhale {
+    width: 144rpx;
+    height: 144rpx;
+    position: absolute;
+    top: 400rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.1s ease-in;
+    opacity: 0;
+  }
+  .aboutText {
+    width: calc(100% - 64rpx);
+    position: absolute;
+    top: 580rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.1s ease-in;
+    opacity: 0;
+  }
   .dialog {
     position: relative;
     margin-top: 420rpx;
@@ -1146,7 +1183,7 @@ export default {
       color: black;
       background-color: #fff;
       padding: 16rpx;
-      border-radius: 0px 18rpx 18rpx 18rpx;
+      border-radius: 18rpx 18rpx 0 18rpx;
       margin-top: 10rpx;
       margin-bottom: 20rpx;
     }
@@ -1163,14 +1200,21 @@ export default {
     height: 800rpx;
     position: absolute;
     background-repeat: repeat-x;
-    transition: transform 1s;
+    transition-property: transform, top;
+    transition-duration: 1s;
     right: 50%;
     top: 500rpx;
-    background-image: url("~@/static/wave_1.png");
   }
   .subWave_1--statue3 {
     transform: translateX(-50%);
     top: 400rpx;
+    background-image: url("~@/static/wave_1.png");
+  }
+  .subWave_1--statue5 {
+    right: 0;
+    transform: translateX(50%);
+    top: 400rpx;
+    background-image: url("~@/static/wave_2.png");
   }
   .wave_1--statue0,
   .wave_1--statue2 {
@@ -1187,7 +1231,7 @@ export default {
     top: 650rpx;
     background-image: url("~@/static/wave_2.png");
     animation: slideshow-reverse 15s linear infinite;
-    background-size: 800rpx 1200rpx !important;
+    background-size: 3840rpx 1600rpx !important;
   }
   .wave_3--statue0,
   .wave_3--statue2 {
@@ -1218,7 +1262,7 @@ export default {
     top: 500rpx;
     background-image: url("~@/static/wave_2.png");
     animation: slideshow-reverse 15s linear infinite;
-    background-size: 800rpx 1200rpx !important;
+    background-size: 3840rpx 1600rpx !important;
   }
   .wave_3--statue1,
   .wave_3--statue4 {
@@ -1240,10 +1284,30 @@ export default {
     right: 0;
     top: 100vh;
     background-image: url("~@/static/wave_2.png");
-    background-size: 800rpx 1200rpx !important;
+    background-size: 3840rpx 1600rpx !important;
   }
   .wave_3--statue3 {
-    right: 0;
+    left: 0;
+    top: 100vh;
+    background-image: url("~@/static/wave_3.png");
+    background-size: 800rpx 1200rpx !important;
+  }
+  .wave_1--statue5 {
+    left: 0;
+    top: 100vh;
+    background-size: 3840rpx 1600rpx !important;
+    background-image: url("~@/static/wave_1.png");
+  }
+  .wave_2--statue5 {
+    right: 50%;
+    transform: translateX(50%);
+    top: 300rpx;
+    height: 1600rpx;
+    background-image: url("~@/static/wave_2.png");
+    background-size: 3840rpx 1600rpx !important;
+  }
+  .wave_3--statue5 {
+    left: 0;
     top: 100vh;
     background-image: url("~@/static/wave_3.png");
     background-size: 800rpx 1200rpx !important;
@@ -1318,9 +1382,9 @@ export default {
     position: absolute !important;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 60rpx;
-    bottom: calc(60rpx + constant(safe-area-inset-bottom));
-    bottom: calc(60rpx + env(safe-area-inset-bottom));
+    bottom: 120rpx;
+    bottom: calc(120rpx + constant(safe-area-inset-bottom));
+    bottom: calc(120rpx + env(safe-area-inset-bottom));
     opacity: 0;
   }
   .down {
@@ -1370,9 +1434,9 @@ export default {
     justify-content: center;
     position: absolute;
     width: calc(100% - 64rpx);
-    bottom: 60rpx;
-    bottom: calc(60rpx + constant(safe-area-inset-bottom));
-    bottom: calc(60rpx + env(safe-area-inset-bottom));
+    bottom: 150rpx;
+    bottom: calc(150rpx + constant(safe-area-inset-bottom));
+    bottom: calc(150rpx + env(safe-area-inset-bottom));
     .check {
       width: 30rpx;
       height: 30rpx;
