@@ -163,7 +163,7 @@
           <view v-for="(item, i) in messageList" :key="i"
             ><text style="font-weight: 700" v-if="item.pursuit===vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">{{ vuex_object }} 对我说</text
             ><text style="font-weight: 700" v-if="item.pursuit!==vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">我对 {{vuex_object}} 说</text
-            ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable>{{ item.addition }}</text></view></view
+            ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;height: auto;">{{ item.addition }}</text></view></view
           ></view
         ></view
       >
@@ -175,7 +175,7 @@
       ></u-button>
       <image
         :class="'btnText text_1' + (pageStatue === 2 ? ' show-class' : '')"
-        src="../../static/past.svg"
+        src="../../static/btn_1.svg"
         mode="heightFix"
         @click="toPast"
         v-show="pageStatue === 2 || tempStatue"
@@ -208,6 +208,7 @@
         v-model="password"
         placeholder-style="color:#5CD7D4;opacity:0.7;font-weight:400"
         v-if="pageStatue === 0"
+        @confirm="toLogin"
         :password="isPassword"
       />
       <image
@@ -255,7 +256,7 @@
       <u-transition
         :show="pageStatue === 1"
         mode="fade"
-        v-if="personalStatue === 1"
+        v-if="personalStatue !== 0"
       >
         <view class="waves">
           <view
@@ -345,13 +346,18 @@
           class="textContent"
           :style="tempStatue_5 ? 'border-radius: 24rpx 24rpx 0px 24rpx;' : ''"
         >
-          <textarea
-            style="width: 100%; height: 100%; z-index: 11"
-            v-model="theText"
-            maxlength="1000"
-            :show-confirm-bar="false"
-            @input="getValue_theText"
-          />
+          <u--textarea
+          style="z-index:11;background-color:#ffffff00;padding:0"
+          height="660rpx"
+          fixed
+          count
+          v-model="theText"
+          maxlength="300"
+          border="none"
+          confirmType=""
+          :show-confirm-bar="false"
+          @input="getValue_theText"
+          ></u--textarea>
         </view>
       </view>
     </view>
@@ -463,15 +469,25 @@ export default {
   },
   onLoad(options) {
     if (options.token) {
-      this.getInfo();
+      this.getInfo(0);
       this.timer = setInterval(() => {
         this.refreshWave(this.personalStatue);
       }, 200);
     }
   },
   created() {
+    window.addEventListener(
+      "touchmove",
+      function (e) {
+        let target = e.target;
+        if (target && target.tagName === "TEXTAREA") {
+          e.stopPropagation();
+        }
+      },
+      true
+    );
     if (this.vuex_token) {
-      this.getInfo();
+      this.getInfo(0);
     } else {
       this.pageStatue = 0;
     }
@@ -499,7 +515,7 @@ export default {
       else if (d >= 19 && d < 24) return 6;
     },
     day() {
-      let minus = new Date() - new Date(this.thatDay);
+      let minus = new Date() - new Date(this.thatDay.replaceAll("-", "/"));
       return Math.ceil(minus / 86400000);
     },
   },
@@ -582,7 +598,10 @@ export default {
     sortByTime(arr) {
       let compare = (property) => {
         return function (a, b) {
-          return new Date(a[property]) - new Date(b[property]);
+          return (
+            new Date(a[property].replaceAll("-", "/")) -
+            new Date(b[property].replaceAll("-", "/"))
+          );
         };
       };
       arr.sort(compare("date"));
@@ -707,8 +726,8 @@ export default {
                     ({ result: res }) => {
                       if (res.length > 0) {
                         this.genderTa = res[0].gender;
-                        this.$u.vuex("vuex_object", res[0].realname);
-                        this.thePerson = res[0].realname;
+                        this.$u.vuex("vuex_object", res[0].userName);
+                        this.thePerson = res[0].userName;
                       } else {
                         this.$u.vuex("vuex_object", "");
                         this.thePerson = "";
@@ -805,7 +824,7 @@ export default {
           this.genderMe = res.gender;
           this.$u.vuex("vuex_token", res.token);
           this.$u.vuex("vuex_user", res.userNumber);
-          this.getInfo();
+          this.getInfo(0);
         })
         .catch(() => {
           this.initVuex();
@@ -814,7 +833,7 @@ export default {
           this.password = "";
         });
     },
-    getInfo() {
+    getInfo(val) {
       getConfession({ token: this.vuex_token })
         .then(({ result: res }) => {
           this.messageList = res;
@@ -839,8 +858,8 @@ export default {
               ({ result: res }) => {
                 if (res.length > 0) {
                   this.genderTa = res[0].gender;
-                  this.$u.vuex("vuex_object", res[0].realname);
-                  this.thePerson = res[0].realname;
+                  this.$u.vuex("vuex_object", res[0].userName);
+                  this.thePerson = res[0].userName;
                 } else {
                   this.$u.vuex("vuex_object", "Ta");
                   this.thePerson = "Ta";
@@ -848,24 +867,30 @@ export default {
               }
             );
           }
-          this.toast("登录成功");
-          this.loginLoading = false;
+          if (val === 0) {
+            this.toast("登录成功");
+            this.pageStatue = 1;
+            this.loginLoading = false;
+          }
           //if (this.personalStatue === 2) {//恭喜文案
           //this.pageStatue = 4;
           //this.tempStatue_5 = true;
           //} else {
-          this.pageStatue = 1;
+          // this.pageStatue = 1;
           //}
         })
         .catch(() => {
           this.toast("非常抱歉，获取用户信息失败，请联系管理员解决！");
-          this.initVuex();
-          this.loginLoading = false;
-          this.password = "";
+          if (val === 0) {
+            this.initVuex();
+            this.loginLoading = false;
+            this.password = "";
+          }
         });
     },
     toPast() {
       this.pageStatue = 3;
+      this.getInfo();
       setTimeout(() => {
         if (this.pageStatue === 3) {
           this.tempStatue_3 = true;
@@ -1455,7 +1480,7 @@ export default {
       top: 20rpx;
       left: 0;
       background-color: white;
-      width: 300rpx;
+      width: 200rpx;
       padding: 0 30rpx;
       height: 64rpx;
       border-radius: 32rpx;
@@ -1467,11 +1492,13 @@ export default {
       height: 36rpx;
     }
     .textContent {
+      touch-action: auto;
       position: absolute;
       padding: 20rpx;
       top: 170rpx;
       left: 0;
       bottom: 260rpx;
+      overflow-y: visible;
       box-sizing: border-box;
       bottom: calc(260rpx + constant(safe-area-inset-bottom));
       bottom: calc(260rpx + env(safe-area-inset-bottom));
