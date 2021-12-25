@@ -476,16 +476,18 @@ export default {
     }
   },
   created() {
-    window.addEventListener(
-      "touchmove",
-      function (e) {
-        let target = e.target;
-        if (target && target.tagName === "TEXTAREA") {
-          e.stopPropagation();
-        }
-      },
-      true
-    );
+    if (window) {
+      window.addEventListener(
+        "touchmove",
+        function (e) {
+          let target = e.target;
+          if (target && target.tagName === "TEXTAREA") {
+            e.stopPropagation();
+          }
+        },
+        true
+      );
+    }
     if (this.vuex_token) {
       this.getInfo(0);
     } else {
