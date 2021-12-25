@@ -2,14 +2,14 @@ import Vue from 'vue'
 import App from './App'
 import uView from "uview-ui";
 import store from '@/store';
-import uma from 'umtrack-wx';
+// import uma from 'umtrack-wx';
 // uma.init({
 //     appKey: '61c4d630e0f9bb492ba92067',
 //     useOpenid: true,
 //     autoGetOpenid: true,
 //     debug: false
 // });
-let vuexStore = require("@/store/$u.mixin.js");
+
 (function(w, d, s, q, i) {
     w[q] = w[q] || [];
     var f = d.getElementsByTagName(s)[0],
@@ -33,6 +33,7 @@ aplus_queue.push({
     action: 'aplus.setMetaInfo',
     arguments: ['DEBUG', false]
 });
+let vuexStore = require("@/store/$u.mixin.js");
 Vue.mixin(vuexStore);
 Vue.use(uView);
 Vue.config.productionTip = false
