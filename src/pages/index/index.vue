@@ -163,7 +163,7 @@
           <view v-for="(item, i) in messageList" :key="i"
             ><text style="font-weight: 700" v-if="item.pursuit===vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">{{ vuex_object }} 对我说</text
             ><text style="font-weight: 700" v-if="item.pursuit!==vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">我对 {{vuex_object}} 说</text
-            ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;height: auto;">{{ item.addition }}</text></view></view
+            ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;word-break:break-word;height: auto;">{{ item.addition }}</text></view></view
           ></view
         ></view
       >
