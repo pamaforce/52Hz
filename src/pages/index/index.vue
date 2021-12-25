@@ -348,7 +348,7 @@
         >
           <u--textarea
           style="z-index:11;background-color:#ffffff00;padding:0"
-          height="660rpx"
+          height="650rpx"
           fixed
           count
           v-model="theText"

@@ -4,6 +4,10 @@
 .uni-textarea-textarea {
   color: #000 !important;
 }
+.textarea--u-textarea__field {
+  z-index: 11 !important;
+  color: #000 !important;
+}
 </style>
 <script>
 export default {};
