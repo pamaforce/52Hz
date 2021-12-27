@@ -78,7 +78,7 @@
       ></view>
       <image src="../../static/whale_1.svg" :class="'aboutWhale'+(tempStatue_7 ? ' textShow' : '')" 
         v-show="pageStatue === 5 || tempStatue_6">
-      <image src="../../static/aboutText.svg" :class="'aboutText'+(tempStatue_7 ? ' textShow' : '')" mode="widthFix" 
+      <image src="../../static/aboutText.svg" :class="'aboutText'+(tempStatue_7 ? ' textShow' : '')+(windowStatue?' h5Top':'')" mode="widthFix"
         v-show="pageStatue === 5 || tempStatue_6">
       <view
         :class="'anchorBar' + (tempStatue_3 ? ' anchorBarShow' : '')"
@@ -365,16 +365,21 @@
       ref="uNotify"
       style="max-width: 450px !important; margin: 0 auto"
     ></u-notify>
+    <u-popup :show="popupShow" mode="center" @close="popupShow=false" bgColor="transparent">
+        <view class="popup">
+            <image src="../../static/aboutText.svg" class="popupText" mode="widthFix"/>
+        </view>
+	</u-popup>
     <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确认是Ta了就不能反悔了哦~" style="text-align:center" @confirm="toConfirm" @cancel="dialogShow=false"></u-modal>
   </scroll-view>
 </template>
 
 <script>
-// const { aplus_queue } = window;
-// aplus_queue.push({
-//   action: "aplus.sendPV",
-//   arguments: [{ is_auto: false }],
-// });
+const { aplus_queue } = window;
+aplus_queue.push({
+  action: "aplus.sendPV",
+  arguments: [{ is_auto: false }],
+});
 import {
   loginTwt,
   getConfession,
@@ -387,6 +392,8 @@ import {
 export default {
   data() {
     return {
+      windowStatue: false,
+      popupShow: false,
       sendLoading: false,
       personalStatue: 0,
       scrollTop: 0,
@@ -469,11 +476,19 @@ export default {
     };
   },
   onLoad(options) {
+    console.log(options.token, this.vuex_token);
+    if (!this.vuex_token) {
+      this.popupShow = true;
+    }
     if (options.token) {
+      this.$u.vuex("vuex_token", options.token);
       this.getInfo(0);
       this.timer = setInterval(() => {
         this.refreshWave(this.personalStatue);
       }, 200);
+    }
+    if (window) {
+      this.windowStatue = true;
     }
   },
   created() {
@@ -1563,6 +1578,24 @@ export default {
       z-index: 10;
     }
   }
+}
+.popup {
+  position: relative;
+  width: 650rpx;
+  max-width: 450px;
+  background-color: #1c2550;
+  border-radius: 24rpx;
+  overflow: hidden;
+  padding: 50rpx;
+  padding-bottom: 36rpx;
+  box-sizing: border-box;
+  .popupText {
+    width: 100%;
+    border-radius: 24rpx;
+  }
+}
+.h5Top {
+  top: 400rpx !important;
 }
 @keyframes slideshow {
   0% {
