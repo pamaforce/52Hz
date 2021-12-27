@@ -178,24 +178,24 @@
         src="../../static/btn_1.svg"
         mode="heightFix"
         @click="toPast"
-        v-show="pageStatue === 2 || tempStatue"
+        v-show="pageStatue === 2 "
       />
       <image
         :class="'btnText text_2' + (pageStatue === 2 ? ' show-class' : '')"
         src="../../static/btn_2.svg"
         mode="heightFix"
         @click="toAbout"
-        v-show="pageStatue === 2 || tempStatue"
+        v-show="pageStatue === 2 "
       /><image
         :class="'btnText text_3' + (pageStatue === 2 ? ' show-class' : '')"
         src="../../static/btn_3.svg"
         mode="heightFix"
         @click="toLogout"
-        v-show="pageStatue === 2 || tempStatue"
+        v-show="pageStatue === 2 "
       />
       <input
         type="text"
-        placeholder="天外天账号"
+        placeholder="天外天账号/学号"
         class="account"
         v-model="account"
         placeholder-style="color:#1C2550;opacity:0.7;font-weight:400"
@@ -240,7 +240,7 @@
         "
       />
       <image
-        v-if="personalStatue === 2"
+        v-show="personalStatue === 2"
         :src="
           genderMe === genderTa
             ? require('../../static/whale_1.svg')
@@ -352,7 +352,7 @@
           fixed
           count
           v-model="theText"
-          maxlength="300"
+          maxlength="250"
           border="none"
           confirmType=""
           :show-confirm-bar="false"
@@ -370,18 +370,19 @@
 </template>
 
 <script>
-const { aplus_queue } = window;
-aplus_queue.push({
-  action: "aplus.sendPV",
-  arguments: [{ is_auto: false }],
-});
+// const { aplus_queue } = window;
+// aplus_queue.push({
+//   action: "aplus.sendPV",
+//   arguments: [{ is_auto: false }],
+// });
 import {
-  login,
+  loginTwt,
   getConfession,
   getUserByUserNumber,
   getUserByName,
   addConfession,
   getConfessionByPursuit,
+  getUserByToken,
 } from "../../api/index";
 export default {
   data() {
@@ -821,7 +822,7 @@ export default {
         return;
       }
       this.loginLoading = true;
-      login({ account: this.account, password: this.password })
+      loginTwt({ account: this.account, password: this.password })
         .then(({ result: res }) => {
           this.genderMe = res.gender;
           this.$u.vuex("vuex_token", res.token);
@@ -836,6 +837,9 @@ export default {
         });
     },
     getInfo(val) {
+      getUserByToken({ token: this.vuex_token }).then(({ result: res }) => {
+        this.genderMe = res;
+      });
       getConfession({ token: this.vuex_token })
         .then(({ result: res }) => {
           this.messageList = res;
@@ -940,6 +944,34 @@ export default {
       }
     },
   },
+  onShareAppMessage() {
+    uni.share({
+      provider: "weixin",
+      scene: "WXSceneSession",
+      type: 5,
+      imageUrl: "~@/static/whale_1.svg",
+      miniProgram: {
+        id: "wx2d5a5e1a4179f15c",
+        path: "pages/index/index",
+        type: 0,
+        webUrl: "https://52hz.twt.edu.cn",
+      },
+    });
+  },
+  onShareTimeline() {
+    uni.share({
+      provider: "weixin",
+      scene: "WXSceneSession",
+      type: 5,
+      imageUrl: "~@/static/whale_1.svg",
+      miniProgram: {
+        id: "wx2d5a5e1a4179f15c",
+        path: "pages/index/index",
+        type: 0,
+        webUrl: "https://52hz.twt.edu.cn",
+      },
+    });
+  },
 };
 </script>
 
@@ -948,7 +980,7 @@ export default {
   height: 100vh !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
-  font-family: Product Sans;
+  font-family: Product Sans !important;
   max-width: 450px;
   margin: 0 auto;
 }
@@ -1482,7 +1514,7 @@ export default {
       top: 20rpx;
       left: 0;
       background-color: white;
-      width: 200rpx;
+      width: 250rpx;
       padding: 0 30rpx;
       height: 64rpx;
       border-radius: 32rpx;

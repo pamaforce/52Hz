@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import uView from "uview-ui";
 import store from '@/store';
+
 // import uma from 'umtrack-wx';
 // uma.init({
 //     appKey: '61c4d630e0f9bb492ba92067',
@@ -10,29 +11,39 @@ import store from '@/store';
 //     debug: false
 // });
 
-(function(w, d, s, q, i) {
-    w[q] = w[q] || [];
-    var f = d.getElementsByTagName(s)[0],
-        j = d.createElement(s);
-    j.async = true;
-    j.id = 'beacon-aplus';
-    j.src = 'https://d.alicdn.com/alilog/mlog/aplus/' + i + '.js';
-    f.parentNode.insertBefore(j, f);
-})(window, document, 'script', 'aplus_queue', '203467608');
-//集成应用的appKey
-aplus_queue.push({
-    action: 'aplus.setMetaInfo',
-    arguments: ['appKey', '61c53d06e014255fcbc7c7fd']
+import uma from 'umtrack-qq';
+uma.init({
+    appKey: '61c97f47e014255fcbcc553f',
+    useOpenid: true,
+    autoGetOpenid: true,
+    uploadUserInfo: true,
+    debug: false
 });
-aplus_queue.push({
-    action: 'aplus.setMetaInfo',
-    arguments: ['aplus-waiting', 'MAN']
-});
-//是否开启调试模式 
-aplus_queue.push({
-    action: 'aplus.setMetaInfo',
-    arguments: ['DEBUG', false]
-});
+
+
+// (function(w, d, s, q, i) {
+//     w[q] = w[q] || [];
+//     var f = d.getElementsByTagName(s)[0],
+//         j = d.createElement(s);
+//     j.async = true;
+//     j.id = 'beacon-aplus';
+//     j.src = 'https://d.alicdn.com/alilog/mlog/aplus/' + i + '.js';
+//     f.parentNode.insertBefore(j, f);
+// })(window, document, 'script', 'aplus_queue', '203467608');
+// //集成应用的appKey
+// aplus_queue.push({
+//     action: 'aplus.setMetaInfo',
+//     arguments: ['appKey', '61c53d06e014255fcbc7c7fd']
+// });
+// aplus_queue.push({
+//     action: 'aplus.setMetaInfo',
+//     arguments: ['aplus-waiting', 'MAN']
+// });
+// //是否开启调试模式 
+// aplus_queue.push({
+//     action: 'aplus.setMetaInfo',
+//     arguments: ['DEBUG', false]
+// });
 let vuexStore = require("@/store/$u.mixin.js");
 Vue.mixin(vuexStore);
 Vue.use(uView);

@@ -1,6 +1,6 @@
 import { service } from '../utils/request';
 
-export function login(data) {
+export function loginTwt(data) {
     return service({
         url: 'login',
         method: "POST",
@@ -43,6 +43,14 @@ export function addConfession(data) {
 export function getConfessionByPursuit(data) {
     return service({
         url: 'getConfessionByPursuit',
+        method: "GET",
+        data
+    })
+}
+
+export function getUserByToken(data) {
+    return service({
+        url: 'getUserByToken',
         method: "GET",
         data
     })

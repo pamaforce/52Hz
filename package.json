@@ -65,6 +65,7 @@
         "flyio": "^0.6.2",
         "regenerator-runtime": "^0.12.1",
         "save": "^2.4.0",
+        "umtrack-qq": "^2.7.1",
         "umtrack-wx": "^2.7.1",
         "uview-ui": "^2.0.14",
         "vue": "^2.6.11",

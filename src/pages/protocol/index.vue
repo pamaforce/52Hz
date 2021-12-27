@@ -151,3 +151,35 @@
       /></view> </view
   ></scroll-view>
 </template>
+<script>
+export default {
+  onShareAppMessage() {
+    uni.share({
+      provider: "weixin",
+      scene: "WXSceneSession",
+      type: 5,
+      imageUrl: "~@/static/whale_1.svg",
+      miniProgram: {
+        id: "wx2d5a5e1a4179f15c",
+        path: "pages/index/index",
+        type: 0,
+        webUrl: "https://52hz.twt.edu.cn",
+      },
+    });
+  },
+  onShareTimeline() {
+    uni.share({
+      provider: "weixin",
+      scene: "WXSceneSession",
+      type: 5,
+      imageUrl: "~@/static/whale_1.svg",
+      miniProgram: {
+        id: "wx2d5a5e1a4179f15c",
+        path: "pages/index/index",
+        type: 0,
+        webUrl: "https://52hz.twt.edu.cn",
+      },
+    });
+  },
+};
+</script>
