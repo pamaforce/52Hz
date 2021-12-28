@@ -174,24 +174,24 @@
         @click="toDo"
       ></u-button>
       <image
-        :class="'btnText text_1' + (pageStatue === 2 ? ' show-class' : '')"
+        :class="'btnText text_1' + (tempStatue ? ' show-class' : '')"
         src="../../static/btn_1.svg"
         mode="heightFix"
         @click="toPast"
-        v-show="pageStatue === 2 "
+        v-show="pageStatue === 2 || tempStatue"
       />
       <image
-        :class="'btnText text_2' + (pageStatue === 2 ? ' show-class' : '')"
+        :class="'btnText text_2' + (tempStatue ? ' show-class' : '')"
         src="../../static/btn_2.svg"
         mode="heightFix"
         @click="toAbout"
-        v-show="pageStatue === 2 "
+        v-show="pageStatue === 2 || tempStatue"
       /><image
-        :class="'btnText text_3' + (pageStatue === 2 ? ' show-class' : '')"
+        :class="'btnText text_3' + (tempStatue ? ' show-class' : '')"
         src="../../static/btn_3.svg"
         mode="heightFix"
         @click="toLogout"
-        v-show="pageStatue === 2 "
+        v-show="pageStatue === 2 || tempStatue"
       />
       <input
         type="text"
@@ -297,7 +297,7 @@
         v-if="pageStatue === 1 || pageStatue === 4"
       />
       <image
-        :class="'copyright' + (pageStatue === 2 ? ' show-class' : '')"
+        :class="'copyright' + (tempStatue ? ' show-class' : '')"
         src="../../static/right.svg"
         mode="heightFix"
         v-show="pageStatue === 2 || tempStatue"
@@ -398,7 +398,7 @@ export default {
       personalStatue: 0,
       scrollTop: 0,
       title: "Hello",
-      pageStatue: 0,
+      pageStatue: 1,
       password: "",
       account: "",
       thePerson: "",
@@ -476,7 +476,6 @@ export default {
     };
   },
   onLoad(options) {
-    console.log(options.token, this.vuex_token);
     if (!this.vuex_token) {
       this.popupShow = true;
     }
@@ -911,6 +910,7 @@ export default {
     },
     toPast() {
       this.pageStatue = 3;
+      this.tempStatue = false;
       this.getInfo();
       setTimeout(() => {
         if (this.pageStatue === 3) {
@@ -921,6 +921,7 @@ export default {
     },
     toAbout() {
       this.pageStatue = 5;
+      this.tempStatue = false;
       setTimeout(() => {
         if (this.pageStatue === 5) {
           this.tempStatue_7 = true;

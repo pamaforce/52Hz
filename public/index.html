@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; img-src 'self' data: base64; style-src 'self' http://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval'; font-src 'self' https://* data: base64;" />
     <title>
         52Hz
     </title>
@@ -15,6 +16,7 @@
         document.write('<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' + (coverSupport ? ', viewport-fit=cover' : '') + '" />')
     </script>
     <link rel="stylesheet" href="<%= BASE_URL %>static/index.<%= VUE_APP_INDEX_CSS_HASH %>.css" />
+    <link rel="icon" href="/static/whale.svg" />
 </head>
 
 <body>
