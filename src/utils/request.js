@@ -7,7 +7,6 @@ export const service = (options) => {
             data: options.data || {},
             header: {
                 "content-type": options.method === 'GET' ? 'application/json' : "application/x-www-form-urlencoded",
-                token: options.token,
                 domain: '52Hz.twt.edu.cn',
                 ticket: 'NTJIei5jNWFlZjI0MTEzYzk2Y2JiNGVmZmZkN2Y0YmNlY2M0MmNhZmExYmRi'
             },

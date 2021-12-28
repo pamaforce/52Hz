@@ -545,6 +545,7 @@ export default {
     },
     toLogout() {
       this.toast("ヾ(￣▽￣)Bye~Bye~");
+      this.tempStatue = false;
       this.pageStatue = 0;
       this.initVuex();
     },
@@ -851,9 +852,18 @@ export default {
         });
     },
     getInfo(val) {
-      getUserByToken({ token: this.vuex_token }).then(({ result: res }) => {
-        this.genderMe = res;
-      });
+      getUserByToken({ token: this.vuex_token }).then(
+        ({ result: res, code: code }) => {
+          if (code === 0) {
+            if (val === 0) {
+              this.toast("登录成功");
+              this.pageStatue = 1;
+              this.loginLoading = false;
+            }
+          }
+          this.genderMe = res;
+        }
+      );
       getConfession({ token: this.vuex_token })
         .then(({ result: res }) => {
           this.messageList = res;
@@ -886,11 +896,6 @@ export default {
                 }
               }
             );
-          }
-          if (val === 0) {
-            this.toast("登录成功");
-            this.pageStatue = 1;
-            this.loginLoading = false;
           }
           //if (this.personalStatue === 2) {//恭喜文案
           //this.pageStatue = 4;
