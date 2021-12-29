@@ -650,7 +650,7 @@ export default {
             }
           })
           .catch(() => {
-            this.toast("寻找Ta遇到问题了，请联系管理员~");
+            this.toast("寻找Ta遇到问题了，可能是Ta还没登录过52Hz哦~");
             this.sendLoading = false;
           });
       } else {
