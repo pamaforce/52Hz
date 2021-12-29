@@ -375,11 +375,11 @@
 </template>
 
 <script>
-// const { aplus_queue } = window;
-// aplus_queue.push({
-//   action: "aplus.sendPV",
-//   arguments: [{ is_auto: false }],
-// });
+const { aplus_queue } = window;
+aplus_queue.push({
+  action: "aplus.sendPV",
+  arguments: [{ is_auto: false }],
+});
 import {
   loginTwt,
   getConfession,
@@ -855,7 +855,7 @@ export default {
     getRequestParams() {
       if (window) {
         let url = location.href;
-        let requestParams = {};
+        let requestParams = { token: "" };
         if (url.indexOf("?") !== -1) {
           let str = url.substr(url.indexOf("?") + 1);
           let strs = str.split("&");
@@ -864,8 +864,8 @@ export default {
               strs[i].split("=")[1]
             );
           }
-          return requestParams;
         }
+        return requestParams;
       } else {
         return { token: "" };
       }
