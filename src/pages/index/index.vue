@@ -375,11 +375,11 @@
 </template>
 
 <script>
-const { aplus_queue } = window;
-aplus_queue.push({
-  action: "aplus.sendPV",
-  arguments: [{ is_auto: false }],
-});
+// const { aplus_queue } = window;
+// aplus_queue.push({
+//   action: "aplus.sendPV",
+//   arguments: [{ is_auto: false }],
+// });
 import {
   loginTwt,
   getConfession,
@@ -398,7 +398,7 @@ export default {
       personalStatue: 0,
       scrollTop: 0,
       title: "Hello",
-      pageStatue: 1,
+      pageStatue: 0,
       password: "",
       account: "",
       thePerson: "",
@@ -475,12 +475,13 @@ export default {
       },
     };
   },
-  onLoad(options) {
+  onLoad() {
+    let { token: token } = this.getRequestParams();
     if (!this.vuex_token) {
       this.popupShow = true;
     }
-    if (options.token) {
-      this.$u.vuex("vuex_token", options.token);
+    if (token) {
+      this.$u.vuex("vuex_token", token);
       this.getInfo(0);
       this.timer = setInterval(() => {
         this.refreshWave(this.personalStatue);
@@ -798,7 +799,7 @@ export default {
           this.tempStatue_4 = false;
           this.tempStatue_6 = false;
           if (this.pageStatue === 2) this.tempStatue = true;
-        }, 1000);
+        }, 500);
       } else if (this.pageStatue === 4) {
         this.heights.map((item, i, self) => {
           this.$set(self, i, 0);
@@ -851,19 +852,53 @@ export default {
           this.password = "";
         });
     },
+    getRequestParams() {
+      if (window) {
+        let url = location.href;
+        let requestParams = {};
+        if (url.indexOf("?") !== -1) {
+          let str = url.substr(url.indexOf("?") + 1);
+          let strs = str.split("&");
+          for (let i = 0; i < strs.length; i++) {
+            requestParams[strs[i].split("=")[0]] = decodeURI(
+              strs[i].split("=")[1]
+            );
+          }
+          return requestParams;
+        }
+      } else {
+        return { token: "" };
+      }
+    },
     getInfo(val) {
-      getUserByToken({ token: this.vuex_token }).then(
-        ({ result: res, code: code }) => {
+      getUserByToken({ token: this.vuex_token })
+        .then(({ result: res, code: code }) => {
           if (code === 0) {
             if (val === 0) {
               this.toast("登录成功");
               this.pageStatue = 1;
               this.loginLoading = false;
             }
+          } else {
+            this.toast("非常抱歉，获取用户信息失败，请联系管理员解决！");
+            if (val === 0) {
+              this.initVuex();
+              this.pageStatue = 0;
+              this.loginLoading = false;
+              this.password = "";
+            }
           }
           this.genderMe = res;
-        }
-      );
+        })
+        .catch(() => {
+          this.toast("非常抱歉，获取用户信息失败，请联系管理员解决！");
+          if (val === 0) {
+            this.initVuex();
+            this.pageStatue = 0;
+            this.loginLoading = false;
+            this.password = "";
+          }
+        });
       getConfession({ token: this.vuex_token })
         .then(({ result: res }) => {
           this.messageList = res;
