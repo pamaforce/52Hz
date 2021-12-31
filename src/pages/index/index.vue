@@ -370,6 +370,7 @@
             <image src="../../static/aboutText.svg" class="popupText" mode="widthFix"/>
         </view>
 	</u-popup>
+  <u-notice-bar :text="noticeText" mode="closable" class="notice" bgColor="#3c9cff" color="#fff" v-show="noticeText"></u-notice-bar>
     <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确定是Ta了吗？只有一次机会哦~" style="text-align:center" @confirm="toConfirm" @cancel="dialogShow=false"></u-modal>
   </scroll-view>
 </template>
@@ -392,6 +393,7 @@ import {
 export default {
   data() {
     return {
+      noticeText: "",
       windowStatue: false,
       popupShow: false,
       sendLoading: false,
@@ -476,6 +478,7 @@ export default {
     };
   },
   created() {
+    this.getNotice();
     let { token: token } = this.getRequestParams();
     if (!this.vuex_token) {
       this.popupShow = true;
@@ -527,6 +530,14 @@ export default {
     },
   },
   methods: {
+    getNotice() {
+      uni.request({
+        url: "https://qcvz73.api.cloudendpoint.cn/notice",
+        success: ({ data: { notice: res } }) => {
+          this.noticeText = res;
+        },
+      });
+    },
     initVuex() {
       this.$u.vuex("vuex_token", "");
       this.$u.vuex("vuex_user", "");
@@ -1628,6 +1639,17 @@ export default {
 }
 .h5Top {
   top: 380rpx !important;
+}
+.notice {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 450px;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  top: constant(safe-area-inset-bottom);
+  top: env(safe-area-inset-bottom);
 }
 @keyframes slideshow {
   0% {
