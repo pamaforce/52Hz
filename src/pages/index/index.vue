@@ -370,7 +370,7 @@
             <image src="../../static/aboutText.svg" class="popupText" mode="widthFix"/>
         </view>
 	</u-popup>
-    <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确认是Ta了就不能反悔了哦~" style="text-align:center" @confirm="toConfirm" @cancel="dialogShow=false"></u-modal>
+    <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确定是Ta了吗？只有一次机会哦~" style="text-align:center" @confirm="toConfirm" @cancel="dialogShow=false"></u-modal>
   </scroll-view>
 </template>
 
@@ -475,7 +475,7 @@ export default {
       },
     };
   },
-  onLoad() {
+  created() {
     let { token: token } = this.getRequestParams();
     if (!this.vuex_token) {
       this.popupShow = true;
@@ -483,15 +483,11 @@ export default {
     if (token) {
       this.$u.vuex("vuex_token", token);
       this.getInfo(0);
-      this.timer = setInterval(() => {
-        this.refreshWave(this.personalStatue);
-      }, 200);
+    } else if (this.vuex_token) {
+      this.getInfo(0);
+    } else {
+      this.pageStatue = 0;
     }
-    if (window) {
-      this.windowStatue = true;
-    }
-  },
-  created() {
     if (window) {
       window.addEventListener(
         "touchmove",
@@ -503,15 +499,8 @@ export default {
         },
         true
       );
+      this.windowStatue = true;
     }
-    if (this.vuex_token) {
-      this.getInfo(0);
-    } else {
-      this.pageStatue = 0;
-    }
-    this.timer = setInterval(() => {
-      this.refreshWave(this.personalStatue);
-    }, 200);
   },
   computed: {
     today() {
@@ -932,6 +921,9 @@ export default {
               }
             );
           }
+          this.timer = setInterval(() => {
+            this.refreshWave(this.personalStatue);
+          }, 200);
           //if (this.personalStatue === 2) {//恭喜文案
           //this.pageStatue = 4;
           //this.tempStatue_5 = true;
@@ -1310,7 +1302,7 @@ export default {
     opacity: 0;
   }
   .aboutText {
-    width: calc(100% - 64rpx);
+    width: calc(100% - 350rpx);
     position: absolute;
     top: 580rpx;
     left: 50%;
@@ -1632,11 +1624,10 @@ export default {
   box-sizing: border-box;
   .popupText {
     width: 100%;
-    border-radius: 24rpx;
   }
 }
 .h5Top {
-  top: 400rpx !important;
+  top: 380rpx !important;
 }
 @keyframes slideshow {
   0% {
