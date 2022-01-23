@@ -376,11 +376,11 @@
 </template>
 
 <script>
-const { aplus_queue } = window;
-aplus_queue.push({
-  action: "aplus.sendPV",
-  arguments: [{ is_auto: false }],
-});
+// const { aplus_queue } = window;
+// aplus_queue.push({
+//   action: "aplus.sendPV",
+//   arguments: [{ is_auto: false }],
+// });
 import {
   loginTwt,
   getConfession,
@@ -1313,7 +1313,7 @@ export default {
     opacity: 0;
   }
   .aboutText {
-    width: calc(100% - 350rpx);
+    width: calc(100% - 220rpx);
     position: absolute;
     top: 580rpx;
     left: 50%;
@@ -1638,18 +1638,8 @@ export default {
   }
 }
 .h5Top {
+  width: calc(100% - 350rpx) !important;
   top: 380rpx !important;
-}
-.notice {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  width: 100%;
-  max-width: 450px;
-  box-sizing: border-box;
-  transform: translateX(-50%);
-  top: constant(safe-area-inset-bottom);
-  top: env(safe-area-inset-bottom);
 }
 @keyframes slideshow {
   0% {
