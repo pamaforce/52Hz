@@ -1,4 +1,4 @@
-const baseURL = "https://52hz.twt.edu.cn/"
+const baseURL = "./"
 export const service = (options) => {
     return new Promise((resolve, reject) => {
         uni.request({
@@ -17,7 +17,7 @@ export const service = (options) => {
                     reject(res)
                 }
             },
-            fail: () => {}
+            fail: () => { reject() }
         })
     })
 }

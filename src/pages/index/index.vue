@@ -11,6 +11,7 @@
         (tempStatue_4 ? 'background-color:#52b4ce;' : 'overflow-y:hidden;') +
         (pageStatue === 4 && tempStatue_5 ? 'background-color:#FF97A1;' : '')
       "
+      @click="hideAllStatue"
     >
       <view class="dialogBack" v-show="tempStatue_4" ref="top"> </view>
       <u-navbar safeAreaInsetTop bgColor="#ffffff00 !important"
@@ -38,7 +39,8 @@
               : require('../../static/52hz.svg')
           "
           class="text"
-          mode="heightFix" /><view
+          mode="heightFix" />
+          <image src="../../static/refresh.svg" :class="'refreshBtn'+(refreshLoading?' rotateLoading':'')" v-if="pageStatue===3" @click="reloadHistory"></image><view
           class="icon"
           @click="toChange"
           v-show="pageStatue !== 0"
@@ -77,96 +79,109 @@
         v-show="!tempStatue_4 || !tempStatue_3"
       ></view>
       <image src="../../static/whale_1.svg" :class="'aboutWhale'+(tempStatue_7 ? ' textShow' : '')" 
-        v-show="pageStatue === 5 || tempStatue_6">
+        v-if="pageStatue === 5 || tempStatue_6">
       <image src="../../static/aboutText.svg" :class="'aboutText'+(tempStatue_7 ? ' textShow' : '')+(windowStatue?' h5Top':'')" mode="widthFix"
-        v-show="pageStatue === 5 || tempStatue_6">
+        v-if="pageStatue === 5 || tempStatue_6">
       <view
         :class="'anchorBar' + (tempStatue_3 ? ' anchorBarShow' : '')"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       ></view>
       <image
         :class="'anchor' + (tempStatue_3 ? ' anchorShow' : '')"
         src="../../static/anchor.svg"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       />
       <view
         :class="
           'subAnchorBar offset-1' + (tempStatue_3 ? ' subAnchorBarShow' : '')
         "
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       ></view>
       <image
         :class="'subAnchor offset-1' + (tempStatue_3 ? ' subAnchorShow' : '')"
         src="../../static/anchor.svg"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       />
       <view
         :class="
           'subAnchorBar offset-2' + (tempStatue_3 ? ' subAnchorBarShow' : '')
         "
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       ></view>
       <image
         :class="'subAnchor offset-2' + (tempStatue_3 ? ' subAnchorShow' : '')"
         src="../../static/anchor.svg"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       />
       <view
         :class="
           'subAnchorBar offset-3' + (tempStatue_3 ? ' subAnchorBarShow' : '')
         "
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       ></view>
       <image
         :class="'subAnchor offset-3' + (tempStatue_3 ? ' subAnchorShow' : '')"
         src="../../static/anchor.svg"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       />
       <view
         :class="
           'subAnchorBar offset-4' + (tempStatue_3 ? ' subAnchorBarShow' : '')
         "
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       ></view>
       <image
         :class="'subAnchor offset-4' + (tempStatue_3 ? ' subAnchorShow' : '')"
         src="../../static/anchor.svg"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
       />
       <text
         :class="'date' + (tempStatue_3 ? ' textShow' : '')"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
         >{{ today }}</text
       >
       <text
         :class="'days' + (tempStatue_3 ? ' textShow' : '')"
-        v-show="pageStatue === 3 || tempStatue_4"
+        v-if="pageStatue === 3 || tempStatue_4"
         >{{
           personalStatue === 0
             ? "您还没有进行告白哦~"
-            : "和 " + vuex_object + " 告白的第" + day + "天"
+            : "和 " + objectRealName + " 告白的第" + day + "天"
         }}</text
       >
       <text
         :class="'wait' + (tempStatue_3 ? ' textShow' : '')"
-        v-show="pageStatue === 3 || tempStatue_4"
-        v-if="personalStatue === 1"
+        v-if="personalStatue === 1&&(pageStatue === 3 || tempStatue_4)"
         >也有在认真等待Ta的告白……</text
       >
       <view
-        class="dialog"
-        v-show="pageStatue === 3 || tempStatue_4"
-        v-if="personalStatue !== 0"
-        :style="personalStatue===1?'margin-top:460rpx':''"
+        :class="'dialog'+(windowStatue?' h5DialogTop':'')"
+        v-if="personalStatue !== 0&&(pageStatue === 3 || tempStatue_4)"
       >
         <view :class="'dialogContent' + (tempStatue_3 ? ' textShow' : '')">
-          <view v-for="(item, i) in messageList" :key="i"
-            ><text style="font-weight: 700" v-if="item.pursuit===vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">{{ vuex_object }} 对我说</text
-            ><text style="font-weight: 700" v-if="item.pursuit!==vuex_user&&(!messageList[i-1]||messageList[i-1].pursuit!==item.pursuit)">我对 {{vuex_object}} 说</text
-            ><view class="detail" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;word-break:break-word;height: auto;">{{ item.addition }}</text></view></view
+          <view v-for="(item, i) in recordList[vuex_object]" :key="i"
+            ><text style="font-weight: 700" v-if="(item.pursuit===vuex_user)&&(!recordList[vuex_object][i-1]||recordList[vuex_object][i-1].pursuit!==item.pursuit)">{{ objectRealName }} 对我说</text
+            ><text style="font-weight: 700" v-if="(item.pursuit!==vuex_user)&&(!recordList[vuex_object][i-1]||recordList[vuex_object][i-1].pursuit!==item.pursuit)">我对 {{objectRealName}} 说</text
+            ><view class="detail" @click.stop="changeDeleteStatue(vuex_object,i)" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;word-break:break-word;height: auto;">{{ item.addition }}</text><image src="../../static/delete.svg" :class="'deleteBtn'+(item.statue?' deleteBtn_show':'')" @click="toDelete(item.id,vuex_object,i)"></image></view></view
           ></view
         ></view
       >
+      <text :class="'more' + (tempStatue_3 ? ' textShow' : '')" v-if="(pageStatue === 3 || tempStatue_4)&&Object.keys(recordList).length>1" >历史告白</text>
+        <template v-for="(value,key) in recordList">
+        <view
+        class="dialogMore"
+        v-if="personalStatue !== 0&&key!==vuex_object&&(pageStatue === 3 || tempStatue_4)"
+        :key="key"
+      >
+        <view :class="'dialogContent' + (tempStatue_3 ? ' textShow' : '')">
+          <view v-for="(item, i) in value" :key="i"
+            ><text style="font-weight: 700" v-if="(item.pursuit===vuex_user)&&(!value[i-1]||value[i-1].pursuit!==item.pursuit)">{{ value[i].pursuitName||key }} 对我说</text
+            ><text style="font-weight: 700" v-if="(item.pursuit!==vuex_user)&&(!value[i-1]||value[i-1].pursuit!==item.pursuit)">我对 {{key}} 说</text
+            ><view class="detail" @click.stop="changeDeleteStatue(key,i)" :style="item.pursuit===vuex_user?'border-radius: 0px 18rpx 18rpx 18rpx;':''"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;word-break:break-word;height: auto;">{{ item.addition }}</text><image src="../../static/delete.svg" :class="'deleteBtn'+(item.statue?' deleteBtn_show':'')" @click="toDelete(item.id,key,i)"></image></view></view
+          ></view
+        ></view
+      ></template>
+      <view  v-if="pageStatue === 3 || tempStatue_4" class="bottom-back"></view>
       <u-button
         text="我还想说"
         :custom-style="moreBtnStyle"
@@ -318,7 +333,7 @@
           @click="toProtocol"
       /></view>
       <view
-        :class="'down' + (pageStatue === 4 ? ' down-normal' : '')"
+        :class="'down' + (pageStatue === 4 ? (' down-normal'+(windowStatue?' h5Down':'')) : '')"
         v-if="!tempStatue_4"
         :style="
           pageStatue === 4 && tempStatue_5 ? 'background-color:#FF97A1;' : ''
@@ -328,7 +343,6 @@
           class="name"
           @input="getValue_thePerson"
           v-model="thePerson"
-          :disabled="personalStatue !== 0"
           placeholder="Ta 的学号或姓名"
         />
         <image
@@ -371,21 +385,21 @@
         </view>
 	</u-popup>
   <u-notice-bar :text="noticeText" mode="closable" class="notice" bgColor="#3c9cff" color="#fff" v-show="noticeText"></u-notice-bar>
-    <u-modal :show="dialogShow" :closeOnClickOverlay="true" showCancelButton content="确定是Ta了吗？只有一次机会哦~" style="text-align:center" @confirm="toConfirm" @cancel="dialogShow=false"></u-modal>
   </scroll-view>
 </template>
 
 <script>
-// const { aplus_queue } = window;
-// aplus_queue.push({
-//   action: "aplus.sendPV",
-//   arguments: [{ is_auto: false }],
-// });
+const { aplus_queue } = window;
+aplus_queue.push({
+  action: "aplus.sendPV",
+  arguments: [{ is_auto: false }],
+});
 import {
   loginTwt,
   getConfession,
   getUserByUserNumber,
-  getUserByName,
+  deleteConfession,
+  spyAddConfession,
   addConfession,
   getConfessionByPursuit,
   getUserByToken,
@@ -393,6 +407,7 @@ import {
 export default {
   data() {
     return {
+      refreshLoading: false,
       noticeText: "",
       windowStatue: false,
       popupShow: false,
@@ -406,7 +421,6 @@ export default {
       thePerson: "",
       theText: "",
       loginLoading: false,
-      dialogShow: false,
       genderMe: "",
       genderTa: "",
       thatDay: "",
@@ -431,8 +445,10 @@ export default {
         [1, 3],
       ],
       messageList: [],
+      recordList: {},
       isPassword: true,
       rate: 1,
+      objectRealName: "",
       tempStatue: false,
       tempStatue_2: false,
       tempStatue_3: false,
@@ -525,11 +541,59 @@ export default {
       else if (d >= 19 && d < 24) return 6;
     },
     day() {
-      let minus = new Date() - new Date(this.thatDay.replaceAll("-", "/"));
-      return Math.ceil(minus / 86400000);
+      if (
+        this.recordList[this.vuex_object] &&
+        this.recordList[this.vuex_object].length
+      ) {
+        let date = "";
+        this.recordList[this.vuex_object].map((item) => {
+          if (!date) {
+            if (
+              item.pursuit === this.vuex_object ||
+              item.pursuitName === this.vuex_object
+            ) {
+              date = item.date;
+              return;
+            }
+          }
+        });
+        let minus = new Date() - new Date(date.replaceAll("-", "/"));
+        return Math.ceil(minus / 86400000) + 1;
+      } else {
+        return 1;
+      }
     },
   },
   methods: {
+    toDelete(id, key, val) {
+      deleteConfession({ id: id, token: this.vuex_token })
+        .then(({ code: code }) => {
+          if (code === 0) {
+            this.toast("删除成功~");
+            this.changeDeleteStatue(key, val);
+            this.refreshLoading = true;
+            this.getInfo(3);
+          } else {
+            this.toast("删除失败……");
+          }
+        })
+        .catch(() => {
+          this.toast("删除失败……");
+        });
+    },
+    hideAllStatue() {
+      if (this.pageStatue !== 3) return;
+      Object.keys(this.recordList).forEach((key) => {
+        this.recordList[key].map((i) => {
+          i.statue = false;
+        });
+      });
+    },
+    changeDeleteStatue(key, val) {
+      this.hideAllStatue();
+      if (this.recordList[key][val].pursuit !== this.vuex_user)
+        this.recordList[key][val].statue = !this.recordList[key][val].statue;
+    },
     getNotice() {
       uni.request({
         url: "https://qcvz73.api.cloudendpoint.cn/notice",
@@ -542,7 +606,7 @@ export default {
       this.$u.vuex("vuex_token", "");
       this.$u.vuex("vuex_user", "");
       this.$u.vuex("vuex_object", "");
-      this.$u.vuex("vuex_objectNo", "");
+      this.$u.vuex("vuex_userName", "");
     },
     toLogout() {
       this.toast("ヾ(￣▽￣)Bye~Bye~");
@@ -570,8 +634,8 @@ export default {
           this.tempStatue_3 = false;
           this.tempStatue_4 = false;
           setTimeout(() => {
+            this.tempStatue = false;
             this.pageStatue = 4;
-            this.tempStatue = true;
             clearInterval(this.timer);
             setTimeout(() => {
               if (this.pageStatue === 4) this.tempStatue_8 = true;
@@ -603,15 +667,18 @@ export default {
           this.toast("请输入Ta的学号或姓名哦~");
           return;
         }
+        if (
+          this.thePerson === this.vuex_user ||
+          this.thePerson === this.vuex_userName
+        ) {
+          this.toast("嘻嘻，知道你喜欢自己啦~");
+          return;
+        }
         if (!this.theText) {
           this.toast("对Ta说点什么吧~");
           return;
         }
-        if (this.personalStatue === 0) {
-          this.dialogShow = true;
-        } else {
-          this.toConfirm();
-        }
+        this.toConfirm();
       }
     },
     sortByTime(arr) {
@@ -626,61 +693,7 @@ export default {
       arr.sort(compare("date"));
     },
     toConfirm() {
-      this.dialogShow = false;
       this.sendLoading = true;
-      let personList = [];
-      if (/^\d{10}$/.test(this.thePerson)) {
-        getUserByUserNumber({ userNumber: this.thePerson })
-          .then(({ result: res }) => {
-            if (res.length === 0) {
-              this.toast("我们也没能找到Ta，检查一下信息吧~");
-              this.sendLoading = false;
-            } else {
-              if (res.length === 1 && res[0].userNumber === this.vuex_user) {
-                this.toast("嘻嘻，知道你喜欢自己啦~");
-                this.sendLoading = false;
-              } else {
-                for (let i = 0; i < res.length; i++) {
-                  if (res[i].userNumber !== this.vuex_user) {
-                    personList.push(res[i].userNumber);
-                  }
-                }
-                this.sendMsg(personList);
-              }
-            }
-          })
-          .catch(() => {
-            this.toast("寻找Ta遇到问题了，可能是Ta还没登录过52Hz哦~");
-            this.sendLoading = false;
-          });
-      } else {
-        getUserByName({ userName: this.thePerson })
-          .then(({ result: res }) => {
-            if (res.length === 0) {
-              this.toast("我们也没能找到Ta，检查一下信息吧~");
-              this.sendLoading = false;
-            } else {
-              if (res.length === 1 && res[0].userNumber === this.vuex_user) {
-                this.toast("嘻嘻，知道你喜欢自己啦~");
-                this.sendLoading = false;
-              } else {
-                for (let i = 0; i < res.length; i++) {
-                  if (res[i].userNumber !== this.vuex_user) {
-                    personList.push(res[i].userNumber);
-                  }
-                }
-                this.sendMsg(personList);
-              }
-            }
-          })
-          .catch(() => {
-            this.toast("寻找Ta遇到问题了，请联系管理员~");
-            this.sendLoading = false;
-          });
-      }
-    },
-    sendMsg(val) {
-      let promiseArr = [];
       let add0 = (x) => (x < 10 ? "0" + x : x);
       let date = new Date();
       let now =
@@ -695,79 +708,43 @@ export default {
         add0(date.getMinutes()) +
         ":" +
         add0(date.getSeconds());
-      for (let i = 0; i < val.length; i++) {
-        promiseArr.push(
-          addConfession({
-            token: this.vuex_token,
-            confessionName: "-",
-            pursuit: val[i],
-            content: "-",
-            addition: this.theText,
-            date: now,
-          })
-        );
-      }
-      Promise.all(promiseArr)
+      addConfession({
+        token: this.vuex_token,
+        confessionName: "-",
+        pursuit: this.thePerson,
+        content: "-",
+        addition: this.theText,
+        date: now,
+      })
         .then((res) => {
-          let flag = true;
-          for (let i = 0; i < res.length; i++) {
-            if (res[i].code !== 0) {
-              flag = false;
-            }
-          }
-          if (flag) {
+          if (res.code === 0) {
             if (this.personalStatue === 0)
               this.toast("告白成功，等待好消息吧！");
             else this.toast("我们已为您精准送达~");
             this.theText = "";
             this.toChange();
-            getConfession({ token: this.vuex_token }).then(
-              ({ result: res }) => {
-                this.messageList = res;
-                if (res.length === 0) {
-                  this.personalStatue = 0;
-                } else {
-                  if (res[0].isMatch === 1) {
-                    this.personalStatue = 2;
-                    getConfessionByPursuit({
-                      pursuit: res[0].pursuit,
-                      token: this.vuex_token,
-                    }).then(({ result: res }) => {
-                      this.messageList.push(...res);
-                      this.sortByTime(this.messageList);
-                    });
-                  } else {
-                    this.personalStatue = 1;
-                  }
-                  this.thatDay = res[0].date;
-                  this.$u.vuex("vuex_objectNo", res[0].pursuit);
-                  getUserByUserNumber({ userNumber: res[0].pursuit }).then(
-                    ({ result: res }) => {
-                      if (res.length > 0) {
-                        this.genderTa = res[0].gender;
-                        this.$u.vuex("vuex_object", res[0].userName);
-                        this.thePerson = res[0].userName;
-                      } else {
-                        this.$u.vuex("vuex_object", "");
-                        this.thePerson = "";
-                      }
-                    }
-                  );
-                }
-              }
-            );
+            this.getInfo(1);
+            this.sendLoading = false;
           } else {
             if (this.personalStatue === 0)
               this.toast("告白可能失败了，请重试~");
             else this.toast("好像没能为您送达消息……");
+            this.sendLoading = false;
           }
-          this.sendLoading = false;
         })
         .catch(() => {
           if (this.personalStatue === 0) this.toast("告白可能失败了，请重试~");
           else this.toast("好像没能为您送达消息……");
           this.sendLoading = false;
         });
+    },
+    reloadHistory() {
+      if (!this.refreshLoading) {
+        this.refreshLoading = true;
+        this.getInfo(2);
+      } else {
+        this.toast("刷新中~");
+      }
     },
     toProtocol() {
       uni.$u.route({
@@ -843,6 +820,7 @@ export default {
           this.genderMe = res.gender;
           this.$u.vuex("vuex_token", res.token);
           this.$u.vuex("vuex_user", res.userNumber);
+          this.$u.vuex("vuex_userName", res.realname);
           this.getInfo(0);
         })
         .catch(() => {
@@ -900,47 +878,118 @@ export default {
           }
         });
       getConfession({ token: this.vuex_token })
-        .then(({ result: res }) => {
-          this.messageList = res;
-          if (res.length === 0) {
-            this.personalStatue = 0;
-          } else {
-            if (res[0].isMatch === 1) {
-              this.personalStatue = 2;
-              getConfessionByPursuit({
-                pursuit: res[0].pursuit,
+        .then(({ result: result }) => {
+          let spyPromiseArr = [];
+          result.map((item) => {
+            spyPromiseArr.push(
+              spyAddConfession({
                 token: this.vuex_token,
-              }).then(({ result: res }) => {
-                this.messageList.push(...res);
-                this.sortByTime(this.messageList);
-              });
-            } else {
-              this.personalStatue = 1;
-            }
-            this.thatDay = res[0].date;
-            this.$u.vuex("vuex_objectNo", res[0].pursuit);
-            getUserByUserNumber({ userNumber: res[0].pursuit }).then(
+                pursuit: item.pursuit || item.pursuitName,
+              })
+            );
+          });
+          Promise.all(spyPromiseArr).then(() => {
+            getConfession({ token: this.vuex_token }).then(
               ({ result: res }) => {
-                if (res.length > 0) {
-                  this.genderTa = res[0].gender;
-                  this.$u.vuex("vuex_object", res[0].userName);
-                  this.thePerson = res[0].userName;
-                } else {
-                  this.$u.vuex("vuex_object", "Ta");
-                  this.thePerson = "Ta";
-                }
+                this.messageList = [];
+                res.map((item, index, arr) => {
+                  item.pursuit = item.pursuit || item.pursuitName;
+                  if (index > 0) {
+                    if (item.date !== arr[index - 1].date) {
+                      this.messageList.push(item);
+                    } else if (arr[index - 1].isMatch !== 1) {
+                      this.messageList.pop();
+                      this.messageList.push(item);
+                    }
+                  } else {
+                    this.messageList.push(item);
+                  }
+                });
+                this.recordList = {};
+                this.messageList.map((item) => {
+                  if (this.recordList[item.pursuit] === undefined) {
+                    this.recordList[item.pursuit] = [];
+                  }
+                  item.statue = false;
+                  this.recordList[item.pursuit].push(item);
+                });
+                let getReplyPromiseArr = [];
+                Object.keys(this.recordList).forEach(async (key) => {
+                  if (await this.isSchoolNumber(key)) {
+                    getReplyPromiseArr.push(
+                      getConfessionByPursuit({
+                        token: this.vuex_token,
+                        pursuit: key,
+                      }).then(({ result: res }) => {
+                        res.map((v) => {
+                          v.statue = false;
+                        });
+                        this.recordList[key].push(...res);
+                      })
+                    );
+                  }
+                });
+                Promise.all(getReplyPromiseArr).then(() => {
+                  let transPromiseArr = [];
+                  Object.keys(this.recordList).forEach(async (key) => {
+                    this.sortByTime(this.recordList[key]);
+                    if (await this.isSchoolNumber(key)) {
+                      transPromiseArr.push(
+                        getUserByUserNumber({ userNumber: key }).then(
+                          ({ result: res }) => {
+                            this.recordList[res[0].userName] =
+                              this.recordList[key];
+                            delete this.recordList[key];
+                          }
+                        )
+                      );
+                    }
+                  });
+                  Promise.all(transPromiseArr).then(async () => {
+                    if (this.messageList.length === 0) {
+                      this.personalStatue = 0;
+                    } else {
+                      this.objectRealName =
+                        this.messageList[this.messageList.length - 1]
+                          .pursuitName ||
+                        this.messageList[this.messageList.length - 1].pursuit;
+                      let objectName =
+                        this.messageList[this.messageList.length - 1].pursuit ||
+                        this.messageList[this.messageList.length - 1]
+                          .pursuitName;
+                      if (await this.isSchoolNumber(objectName)) {
+                        await getUserByUserNumber({
+                          userNumber: objectName,
+                        }).then(({ result: res }) => {
+                          objectName = res[0].userName;
+                          this.genderTa = res[0].gender;
+                        });
+                      }
+                      this.$u.vuex("vuex_object", objectName || "Ta");
+                      this.thePerson = this.objectRealName;
+                      if (
+                        this.recordList[this.vuex_object][0] &&
+                        this.recordList[this.vuex_object][0].isMatch
+                      ) {
+                        this.personalStatue = 2;
+                      } else {
+                        this.personalStatue = 1;
+                      }
+                      if (val === 2) {
+                        this.toast("刷新成功！");
+                        this.refreshLoading = false;
+                      } else if (val === 3) {
+                        this.refreshLoading = false;
+                      }
+                      this.timer = setInterval(() => {
+                        this.refreshWave(this.personalStatue);
+                      }, 200);
+                    }
+                  });
+                });
               }
             );
-          }
-          this.timer = setInterval(() => {
-            this.refreshWave(this.personalStatue);
-          }, 200);
-          //if (this.personalStatue === 2) {//恭喜文案
-          //this.pageStatue = 4;
-          //this.tempStatue_5 = true;
-          //} else {
-          // this.pageStatue = 1;
-          //}
+          });
         })
         .catch(() => {
           this.toast("非常抱歉，获取用户信息失败，请联系管理员解决！");
@@ -951,10 +1000,26 @@ export default {
           }
         });
     },
+    async isSchoolNumber(val) {
+      if (/^\d{10}$/.test(val)) {
+        let flag = false;
+        await getUserByUserNumber({ userNumber: val })
+          .then(() => {
+            flag = true;
+            return;
+          })
+          .catch(() => {
+            flag = false;
+            return;
+          });
+        return flag;
+      } else {
+        return false;
+      }
+    },
     toPast() {
       this.pageStatue = 3;
       this.tempStatue = false;
-      this.getInfo();
       setTimeout(() => {
         if (this.pageStatue === 3) {
           this.tempStatue_3 = true;
@@ -1058,9 +1123,17 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    position: relative;
     .text {
       z-index: 10;
       height: 96rpx;
+    }
+    .refreshBtn {
+      width: 56rpx;
+      height: 56rpx;
+      position: absolute;
+      right: 110rpx;
+      top: 21rpx;
     }
     .icon {
       width: 70rpx;
@@ -1298,6 +1371,24 @@ export default {
     opacity: 0;
     transition: all 0.1s ease-in;
   }
+  .more {
+    position: relative;
+    font-size: 40rpx;
+    width: 100%;
+    margin-top: 40rpx;
+    margin-bottom: 20rpx;
+    display: inline-block;
+    text-align: center;
+    font-weight: 700;
+    color: #00284c;
+    opacity: 0;
+    transition: all 0.1s ease-in;
+  }
+  .bottom-back {
+    height: 240rpx;
+    height: calc(240rpx + constant(safe-area-inset-bottom));
+    height: calc(240rpx + env(safe-area-inset-bottom));
+  }
   .textShow {
     transition: opacity 1s ease-in !important;
     opacity: 1 !important;
@@ -1323,12 +1414,15 @@ export default {
   }
   .dialog {
     position: relative;
-    margin-top: 420rpx;
+    margin-top: 380rpx;
     width: 100%;
-    margin-bottom: 240rpx;
-    margin-bottom: calc(240rpx + constant(safe-area-inset-bottom));
-    margin-bottom: calc(240rpx + env(safe-area-inset-bottom));
     border-radius: 32rpx;
+  }
+  .dialogMore {
+    position: relative;
+    width: 100%;
+    border-radius: 32rpx;
+    margin-bottom: 20rpx;
   }
   .dialogBack {
     position: absolute;
@@ -1343,9 +1437,6 @@ export default {
     padding: 32rpx;
     box-sizing: border-box;
     margin: 0 32rpx;
-    margin-bottom: 240rpx;
-    margin-bottom: calc(240rpx + constant(safe-area-inset-bottom));
-    margin-bottom: calc(240rpx + env(safe-area-inset-bottom));
     border-radius: 32rpx;
     background-color: #00284c;
     opacity: 0;
@@ -1353,13 +1444,29 @@ export default {
     color: #fff;
     font-size: 28rpx;
     .detail {
+      position: relative;
       color: black;
       background-color: #fff;
       padding: 16rpx;
       border-radius: 18rpx 18rpx 0 18rpx;
       margin-top: 10rpx;
       margin-bottom: 20rpx;
+      .deleteBtn {
+        position: absolute;
+        right: 37rpx;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0rpx;
+        height: 0rpx;
+        transform-origin: 50% 50%;
+        transition: all ease-in 0.2s;
+      }
     }
+  }
+  .deleteBtn_show {
+    width: 50rpx !important;
+    height: 50rpx !important;
+    right: 12rpx !important;
   }
   .theWave {
     width: 3840rpx;
@@ -1640,6 +1747,24 @@ export default {
 .h5Top {
   width: calc(100% - 350rpx) !important;
   top: 380rpx !important;
+}
+.h5Down {
+  top: 0rpx !important;
+}
+.h5DialogTop {
+  margin-top: 480rpx !important;
+}
+.rotateLoading {
+  transform-origin: 50% 50%;
+  animation: rotate 0.5s linear infinite;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 @keyframes slideshow {
   0% {

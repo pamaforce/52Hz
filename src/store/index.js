@@ -12,7 +12,7 @@ try {
 }
 
 // 需要永久存储，且下次APP启动需要取出的，在state中的变量名
-let saveStateKeys = ['vuex_token', 'vuex_user', 'vuex_object', 'vuex_objectNo'];
+let saveStateKeys = ['vuex_token', 'vuex_user', 'vuex_object', 'vuex_userName'];
 
 // 保存变量到本地存储中
 const saveLifeData = function(key, value) {
@@ -35,7 +35,7 @@ const store = new Vuex.Store({
         vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '',
         vuex_user: lifeData.vuex_token ? lifeData.vuex_user : '',
         vuex_object: lifeData.vuex_token ? lifeData.vuex_object : '',
-        vuex_objectNo: lifeData.vuex_token ? lifeData.vuex_objectNo : '',
+        vuex_userName: lifeData.vuex_token ? lifeData.vuex_userName : '',
         // 如果vuex_version无需保存到本地永久存储，无需lifeData.vuex_version方式
         vuex_version: '1.0.1',
     },

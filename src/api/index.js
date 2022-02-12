@@ -10,7 +10,7 @@ export function loginTwt(data) {
 
 export function getConfession(data) {
     return service({
-        url: 'getConfession',
+        url: 'getAllConfession',
         method: "GET",
         data
     })
@@ -35,6 +35,22 @@ export function getUserByUserNumber(data) {
 export function addConfession(data) {
     return service({
         url: 'addConfession',
+        method: "POST",
+        data
+    })
+}
+
+export function deleteConfession(data) {
+    return service({
+        url: 'deleteConfession',
+        method: "POST",
+        data
+    })
+}
+
+export function spyAddConfession(data) {
+    return service({
+        url: 'spyAddConfession',
         method: "POST",
         data
     })
