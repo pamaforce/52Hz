@@ -40,6 +40,30 @@ export function addConfession(data) {
     })
 }
 
+export function addConfessionXiaoTang(data, token) {
+    return service({
+        url: `xiaotang/addConfession?token=${token}`,
+        method: "POST",
+        data
+    })
+}
+
+export function getConfessionXiaoTang(token) {
+    return service({
+        url: `xiaotang/getMy?token=${token}`,
+        method: "GET",
+    })
+}
+
+
+export function deleteConfessionXiaoTang(data, token) {
+    return service({
+        url: `xiaotang/deleteIt?token=${token}`,
+        method: "POST",
+        data
+    })
+}
+
 export function deleteConfession(data) {
     return service({
         url: 'deleteConfession',

@@ -166,6 +166,18 @@
           ></view
         ></view
       >
+      <text :class="'more' + (tempStatue_3 ? ' textShow' : '')" v-if="(pageStatue === 3 || tempStatue_4)&&Object.keys(recordList).length>1" >给小棠的告白</text>
+        <view
+        class="dialogMore"
+        v-if="xiaoTangMessage.length !== 0&&(pageStatue === 3 || tempStatue_4)"
+      >
+        <view :class="'dialogContent' + (tempStatue_3 ? ' textShow' : '')">
+          <text style="font-weight: 700" >我对 小棠 说</text>
+          <view v-for="(item, i) in xiaoTangMessage" :key="i"
+            ><view class="detail" @click.stop="changeXiaoTangDeleteStatue(i)" v-if="item.is_deleted===0"><text user-select selectable style="width:100%;display:inline-block;white-space: pre-wrap; word-wrap: break-word;word-break:break-word;height: auto;">{{ item.msg }}</text><image src="../../static/delete.svg" :class="'deleteBtn'+(item.statue?' deleteBtn_show':'')" @click="toXiaoTangDelete(item.id,i)"></image></view></view
+          ></view
+        ></view
+      >
       <text :class="'more' + (tempStatue_3 ? ' textShow' : '')" v-if="(pageStatue === 3 || tempStatue_4)&&Object.keys(recordList).length>1" >历史告白</text>
         <template v-for="(value,key) in recordList">
         <view
@@ -342,6 +354,7 @@
         <input
           class="name"
           @input="getValue_thePerson"
+          :disabled="xiaoTangDisable"
           v-model="thePerson"
           placeholder="Ta 的学号或姓名"
         />
@@ -379,21 +392,26 @@
       ref="uNotify"
       style="max-width: 450px !important; margin: 0 auto"
     ></u-notify>
+    <u-popup :show="popupShow_2" mode="center" @close="popupShow_2=false" bgColor="transparent">
+        <view class="popup">
+            <image src="../../static/xiaoTangText.svg" class="popupText" mode="widthFix"/>
+        </view>
+	  </u-popup>
     <u-popup :show="popupShow" mode="center" @close="popupShow=false" bgColor="transparent">
         <view class="popup">
             <image src="../../static/aboutText.svg" class="popupText" mode="widthFix"/>
         </view>
-	</u-popup>
-  <u-notice-bar :text="noticeText" mode="closable" class="notice" bgColor="#3c9cff" color="#fff" v-show="noticeText"></u-notice-bar>
+	  </u-popup>
+  <!-- <u-notice-bar :text="noticeText" mode="closable" class="notice" bgColor="#3c9cff" color="#fff" v-show="noticeText"></u-notice-bar> -->
   </scroll-view>
 </template>
 
 <script>
-const { aplus_queue } = window;
-aplus_queue.push({
-  action: "aplus.sendPV",
-  arguments: [{ is_auto: false }],
-});
+// const { aplus_queue } = window;
+// aplus_queue.push({
+//   action: "aplus.sendPV",
+//   arguments: [{ is_auto: false }],
+// });
 import {
   loginTwt,
   getConfession,
@@ -403,14 +421,20 @@ import {
   addConfession,
   getConfessionByPursuit,
   getUserByToken,
+  addConfessionXiaoTang,
+  getConfessionXiaoTang,
+  deleteConfessionXiaoTang,
 } from "../../api/index";
 export default {
   data() {
     return {
+      xiaoTangDisable: true,
+      xiaoTangMessage: [],
       refreshLoading: false,
       noticeText: "",
       windowStatue: false,
       popupShow: false,
+      popupShow_2: false,
       sendLoading: false,
       personalStatue: 0,
       scrollTop: 0,
@@ -498,6 +522,7 @@ export default {
     let { token: token } = this.getRequestParams();
     if (!this.vuex_token) {
       this.popupShow = true;
+      this.popupShow_2 = true;
     }
     if (token) {
       this.$u.vuex("vuex_token", token);
@@ -581,6 +606,22 @@ export default {
           this.toast("删除失败……");
         });
     },
+    toXiaoTangDelete(id, key) {
+      deleteConfessionXiaoTang({ id: id })
+        .then(({ code: code }) => {
+          if (code === 0) {
+            this.toast("删除成功~");
+            this.changeXiaoTangDeleteStatue(key);
+            this.refreshLoading = true;
+            this.getInfo(3);
+          } else {
+            this.toast("删除失败……");
+          }
+        })
+        .catch(() => {
+          this.toast("删除失败……");
+        });
+    },
     hideAllStatue() {
       if (this.pageStatue !== 3) return;
       Object.keys(this.recordList).forEach((key) => {
@@ -588,19 +629,26 @@ export default {
           i.statue = false;
         });
       });
+      this.xiaoTangMessage.map((item) => {
+        item.statue = false;
+      });
     },
     changeDeleteStatue(key, val) {
       this.hideAllStatue();
       if (this.recordList[key][val].pursuit !== this.vuex_user)
         this.recordList[key][val].statue = !this.recordList[key][val].statue;
     },
+    changeXiaoTangDeleteStatue(key) {
+      this.hideAllStatue();
+      this.xiaoTangMessage[key].statue = !this.xiaoTangMessage[key].statue;
+    },
     getNotice() {
-      uni.request({
-        url: "https://qcvz73.api.cloudendpoint.cn/notice",
-        success: ({ data: { notice: res } }) => {
-          this.noticeText = res;
-        },
-      });
+      // uni.request({
+      //   url: "https://qcvz73.api.cloudendpoint.cn/notice",
+      //   success: ({ data: { notice: res } }) => {
+      //     this.noticeText = res;
+      //   },
+      // });
     },
     initVuex() {
       this.$u.vuex("vuex_token", "");
@@ -693,50 +741,76 @@ export default {
       arr.sort(compare("date"));
     },
     toConfirm() {
-      this.sendLoading = true;
-      let add0 = (x) => (x < 10 ? "0" + x : x);
-      let date = new Date();
-      let now =
-        date.getFullYear() +
-        "-" +
-        add0(date.getMonth() + 1) +
-        "-" +
-        add0(date.getDate()) +
-        " " +
-        add0(date.getHours()) +
-        ":" +
-        add0(date.getMinutes()) +
-        ":" +
-        add0(date.getSeconds());
-      addConfession({
-        token: this.vuex_token,
-        confessionName: "-",
-        pursuit: this.thePerson,
-        content: "-",
-        addition: this.theText,
-        date: now,
-      })
-        .then((res) => {
-          if (res.code === 0) {
-            if (this.personalStatue === 0)
-              this.toast("告白成功，等待好消息吧！");
-            else this.toast("我们已为您精准送达~");
-            this.theText = "";
-            this.toChange();
-            this.getInfo(1);
+      if (this.xiaoTangDisable) {
+        addConfessionXiaoTang(
+          {
+            msg: this.theText,
+          },
+          this.vuex_token
+        )
+          .then((res) => {
+            if (res.code === 0) {
+              this.toast("我们已为您精准送达~");
+              this.theText = "";
+              this.toChange();
+              this.getInfo(1);
+              this.sendLoading = false;
+            } else {
+              this.toast("好像没能为您送达消息……");
+              this.sendLoading = false;
+            }
+          })
+          .catch(() => {
+            this.toast("好像没能为您送达消息……");
             this.sendLoading = false;
-          } else {
+          });
+      } else {
+        this.sendLoading = true;
+        let add0 = (x) => (x < 10 ? "0" + x : x);
+        let date = new Date();
+        let now =
+          date.getFullYear() +
+          "-" +
+          add0(date.getMonth() + 1) +
+          "-" +
+          add0(date.getDate()) +
+          " " +
+          add0(date.getHours()) +
+          ":" +
+          add0(date.getMinutes()) +
+          ":" +
+          add0(date.getSeconds());
+        addConfession({
+          token: this.vuex_token,
+          confessionName: "-",
+          pursuit: this.thePerson,
+          content: "-",
+          addition: this.theText,
+          date: now,
+        })
+          .then((res) => {
+            if (res.code === 0) {
+              if (this.personalStatue === 0)
+                this.toast("告白成功，等待好消息吧！");
+              else this.toast("我们已为您精准送达~");
+              this.theText = "";
+              this.toChange();
+              this.getInfo(1);
+              this.sendLoading = false;
+            } else {
+              if (this.personalStatue === 0)
+                this.toast("告白可能失败了，请重试~");
+              else this.toast("好像没能为您送达消息……");
+              this.sendLoading = false;
+            }
+          })
+          .catch(() => {
             if (this.personalStatue === 0)
               this.toast("告白可能失败了，请重试~");
             else this.toast("好像没能为您送达消息……");
             this.sendLoading = false;
-          }
-        })
-        .catch(() => {
-          if (this.personalStatue === 0) this.toast("告白可能失败了，请重试~");
-          else this.toast("好像没能为您送达消息……");
-          this.sendLoading = false;
-        });
+          });
+      }
     },
     reloadHistory() {
       if (!this.refreshLoading) {
@@ -823,9 +897,13 @@ export default {
           this.$u.vuex("vuex_userName", res.realname);
           this.getInfo(0);
         })
-        .catch(() => {
+        .catch((res) => {
           this.initVuex();
-          this.toast("账号或密码错误，再仔细检查一下吧！");
+          if (res && res.code === 1004) {
+            this.toast("账号或密码错误，请检查后重新登录！");
+          } else {
+            this.toast("登录失败，可能是服务器出现问题，请联系管理员处理！");
+          }
           this.loginLoading = false;
           this.password = "";
         });
@@ -877,6 +955,16 @@ export default {
             this.password = "";
           }
         });
+      if (this.xiaoTangDisable) {
+        getConfessionXiaoTang(this.vuex_token).then((res) => {
+          if (res.code === 0) {
+            this.xiaoTangMessage = res.result;
+            this.xiaoTangMessage.map((item) => {
+              item.statue = false;
+            });
+          }
+        });
+      }
       getConfession({ token: this.vuex_token })
         .then(({ result: result }) => {
           let spyPromiseArr = [];
@@ -966,7 +1054,11 @@ export default {
                         });
                       }
                       this.$u.vuex("vuex_object", objectName || "Ta");
-                      this.thePerson = this.objectRealName;
+                      if (this.xiaoTangDisable) {
+                        this.thePerson = "小棠";
+                      } else {
+                        this.thePerson = this.objectRealName;
+                      }
                       if (
                         this.recordList[this.vuex_object][0] &&
                         this.recordList[this.vuex_object][0].isMatch
@@ -1745,8 +1837,7 @@ export default {
   }
 }
 .h5Top {
-  width: calc(100% - 350rpx) !important;
-  top: 380rpx !important;
+  width: calc(100% - 400rpx) !important;
 }
 .h5Down {
   top: 0rpx !important;
