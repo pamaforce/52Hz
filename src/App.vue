@@ -6,6 +6,7 @@
 .textarea--u-textarea__field {
   z-index: 11 !important;
   color: #000 !important;
+  font-size: 36rpx !important;
 }
 .u-notice-bar {
   position: fixed;

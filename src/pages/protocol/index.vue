@@ -1,6 +1,12 @@
 <template>
   <scroll-view
-    style="height: 100vh; max-width: 450px; margin: 0 auto; overflow-x: hidden"
+    style="
+      height: 100vh;
+      max-width: 450px;
+      margin: 0 auto;
+      overflow-x: hidden;
+      font-family: Product Sans;
+    "
     scroll-y
   >
     <view
